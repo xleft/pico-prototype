@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>为你写诗 - 活动包装版</title>
+    <meta
+      name="description"
+      content="春日浪漫主题活动宣传页，聚焦活动亮点、参与路径与氛围表达。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700;900&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #fbf3eb;
+        --bg-soft: #f6ece3;
+        --card: rgba(255, 250, 246, 0.78);
+        --card-strong: rgba(255, 248, 242, 0.92);
+        --text: #3d2a2f;
+        --muted: #7b6166;
+        --line: rgba(119, 87, 92, 0.14);
+        --rose: #c86c82;
+        --rose-deep: #a94f66;
+        --gold: #d3a267;
+        --shadow: 0 24px 70px rgba(116, 73, 83, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Noto Sans SC", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(255, 222, 214, 0.9), transparent 28%),
+          radial-gradient(circle at 85% 12%, rgba(255, 236, 201, 0.7), transparent 22%),
+          linear-gradient(180deg, #fff9f5 0%, #f8efe7 42%, #f3e6dd 100%);
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.06)),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='none' stroke='rgba(173,132,138,0.09)' stroke-width='1'%3E%3Cpath d='M22 120c18-20 40-28 66-24s45 1 68-20'/%3E%3Cpath d='M14 50c20 12 39 15 59 10s43-1 76 18'/%3E%3C/g%3E%3C/svg%3E");
+        mix-blend-mode: multiply;
+        opacity: 0.55;
+      }
+
+      .petals {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
+      }
+
+      .petal {
+        position: absolute;
+        top: -10vh;
+        width: 18px;
+        height: 12px;
+        border-radius: 14px 14px 14px 4px;
+        background: linear-gradient(135deg, rgba(255, 210, 221, 0.96), rgba(214, 137, 164, 0.92));
+        box-shadow: 0 8px 18px rgba(204, 107, 139, 0.15);
+        opacity: 0.72;
+        animation: fall linear infinite;
+      }
+
+      @keyframes fall {
+        0% {
+          transform: translate3d(0, -10vh, 0) rotate(0deg) scale(0.9);
+        }
+        100% {
+          transform: translate3d(var(--drift), 110vh, 0) rotate(360deg) scale(1.08);
+        }
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+      }
+
+      .section {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        min-height: 100svh;
+        display: flex;
+        align-items: center;
+        padding: 36px 0 48px;
+      }
+
+      .hero-shell {
+        position: relative;
+        width: 100%;
+        border: 1px solid rgba(147, 99, 109, 0.1);
+        border-radius: 36px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(255, 245, 231, 0.86), transparent 32%),
+          radial-gradient(circle at 80% 18%, rgba(255, 218, 224, 0.82), transparent 28%),
+          linear-gradient(145deg, rgba(255, 251, 248, 0.9), rgba(246, 230, 220, 0.84));
+        box-shadow: var(--shadow);
+      }
+
+      .hero-shell::before,
+      .hero-shell::after {
+        content: "";
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(6px);
+      }
+
+      .hero-shell::before {
+        width: 320px;
+        height: 320px;
+        top: -100px;
+        right: -80px;
+        background: radial-gradient(circle, rgba(220, 160, 180, 0.35), transparent 68%);
+      }
+
+      .hero-shell::after {
+        width: 380px;
+        height: 380px;
+        bottom: -120px;
+        left: -90px;
+        background: radial-gradient(circle, rgba(243, 205, 152, 0.28), transparent 68%);
+      }
+
+      .hero-grid {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.12fr 0.88fr;
+        gap: 24px;
+        padding: 42px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(170, 98, 118, 0.16);
+        background: rgba(255, 255, 255, 0.64);
+        color: var(--rose-deep);
+        font-size: 13px;
+        letter-spacing: 0.12em;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--rose), var(--gold));
+      }
+
+      h1 {
+        margin: 18px 0 14px;
+        font-family: "Noto Serif SC", serif;
+        font-size: clamp(42px, 7vw, 78px);
+        line-height: 1.04;
+        letter-spacing: 0.02em;
+      }
+
+      .hero h1 span {
+        display: block;
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        color: var(--rose-deep);
+        opacity: 0.94;
+      }
+
+      .hero-lead {
+        max-width: 580px;
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: clamp(15px, 2.5vw, 18px);
+        line-height: 1.85;
+      }
+
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .meta-pill {
+        padding: 12px 14px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(133, 95, 101, 0.11);
+        min-width: 140px;
+      }
+
+      .meta-pill strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        color: var(--rose-deep);
+      }
+
+      .meta-pill span {
+        font-size: 14px;
+        color: var(--text);
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 54px;
+        padding: 0 24px;
+        border-radius: 999px;
+        text-decoration: none;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+      }
+
+      .button-primary {
+        color: #fff8f4;
+        background: linear-gradient(135deg, #c86c82, #b95e75 52%, #d3a267 100%);
+        box-shadow: 0 18px 36px rgba(177, 93, 116, 0.24);
+      }
+
+      .button-secondary {
+        color: var(--rose-deep);
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(170, 98, 118, 0.18);
+      }
+
+      .hero-note {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .mini-card {
+        padding: 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid rgba(146, 108, 116, 0.1);
+      }
+
+      .mini-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: var(--rose-deep);
+      }
+
+      .mini-card p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .visual-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        justify-content: center;
+      }
+
+      .poster {
+        position: relative;
+        min-height: 520px;
+        padding: 26px;
+        border-radius: 30px;
+        overflow: hidden;
+        color: #fffaf4;
+        background:
+          linear-gradient(180deg, rgba(53, 30, 41, 0.22), rgba(53, 30, 41, 0.62)),
+          radial-gradient(circle at 50% 20%, rgba(255, 233, 208, 0.42), transparent 24%),
+          linear-gradient(160deg, #c88ea2 0%, #a56780 32%, #7d5875 68%, #5f4b69 100%);
+        box-shadow: 0 30px 50px rgba(84, 52, 63, 0.24);
+      }
+
+      .poster::before {
+        content: "";
+        position: absolute;
+        inset: 20px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 246, 236, 0.25);
+      }
+
+      .poster::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0;
+        height: 52%;
+        background:
+          radial-gradient(circle at 30% 30%, rgba(255, 229, 196, 0.16), transparent 18%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(54, 32, 44, 0.54));
+      }
+
+      .poster-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-between;
+      }
+
+      .poster-tag {
+        align-self: flex-start;
+        padding: 9px 14px;
+        border-radius: 999px;
+        background: rgba(255, 251, 245, 0.16);
+        border: 1px solid rgba(255, 248, 238, 0.24);
+        backdrop-filter: blur(10px);
+        font-size: 12px;
+        letter-spacing: 0.14em;
+      }
+
+      .poster-copy h2 {
+        margin: 0 0 10px;
+        font-family: "Noto Serif SC", serif;
+        font-size: clamp(34px, 5vw, 52px);
+        line-height: 1.15;
+      }
+
+      .poster-copy p {
+        margin: 0;
+        max-width: 300px;
+        color: rgba(255, 247, 240, 0.85);
+        line-height: 1.8;
+      }
+
+      .poster-cards {
+        display: grid;
+        gap: 12px;
+      }
+
+      .poster-card {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255, 251, 245, 0.12);
+        border: 1px solid rgba(255, 248, 238, 0.18);
+        backdrop-filter: blur(14px);
+      }
+
+      .poster-card strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .poster-card span {
+        color: rgba(255, 247, 240, 0.76);
+        font-size: 13px;
+      }
+
+      .poster-card em {
+        font-style: normal;
+        color: #ffe1b6;
+        white-space: nowrap;
+      }
+
+      .stack-card {
+        padding: 18px 20px;
+        border-radius: 24px;
+        background: var(--card-strong);
+        border: 1px solid rgba(149, 112, 119, 0.1);
+        box-shadow: 0 18px 28px rgba(128, 90, 99, 0.08);
+      }
+
+      .stack-card strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--rose-deep);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+      }
+
+      .stack-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.75;
+        font-size: 14px;
+      }
+
+      .content {
+        padding: 24px 0 80px;
+      }
+
+      .block {
+        margin-bottom: 18px;
+        padding: 26px;
+        border-radius: 30px;
+        background: var(--card);
+        border: 1px solid rgba(149, 112, 119, 0.1);
+        box-shadow: 0 18px 42px rgba(126, 88, 96, 0.08);
+        backdrop-filter: blur(12px);
+      }
+
+      .block-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: end;
+        margin-bottom: 20px;
+      }
+
+      .block-head h3 {
+        margin: 0 0 8px;
+        font-family: "Noto Serif SC", serif;
+        font-size: clamp(26px, 4vw, 38px);
+      }
+
+      .block-head p {
+        margin: 0;
+        max-width: 560px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .label {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(200, 108, 130, 0.08);
+        color: var(--rose-deep);
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        white-space: nowrap;
+      }
+
+      .grid-3,
+      .grid-2 {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .feature-card,
+      .path-card,
+      .gift-card,
+      .tone-card {
+        padding: 22px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid var(--line);
+      }
+
+      .feature-card h4,
+      .path-card h4,
+      .gift-card h4,
+      .tone-card h4 {
+        margin: 0 0 10px;
+        font-family: "Noto Serif SC", serif;
+        font-size: 22px;
+      }
+
+      .feature-card p,
+      .path-card p,
+      .gift-card p,
+      .tone-card p,
+      .gift-card li {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 14px;
+      }
+
+      .feature-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .feature-top span {
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        color: var(--rose-deep);
+      }
+
+      .path-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .path-step {
+        display: grid;
+        grid-template-columns: 58px 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+
+      .step-no {
+        display: grid;
+        place-items: center;
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(200, 108, 130, 0.18), rgba(211, 162, 103, 0.18));
+        color: var(--rose-deep);
+        font-family: "Playfair Display", serif;
+        font-size: 24px;
+      }
+
+      .timeline {
+        display: grid;
+        gap: 14px;
+      }
+
+      .timeline-item {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 14px;
+        padding: 16px 0;
+        border-top: 1px solid rgba(124, 93, 99, 0.12);
+      }
+
+      .timeline-item:first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .timeline-time {
+        color: var(--rose-deep);
+        font-weight: 700;
+      }
+
+      .timeline-body strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .timeline-body p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .gift-card ul {
+        margin: 14px 0 0;
+        padding-left: 18px;
+      }
+
+      .cta-block {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: center;
+        background:
+          radial-gradient(circle at 10% 20%, rgba(255, 232, 203, 0.48), transparent 24%),
+          linear-gradient(135deg, rgba(255, 248, 241, 0.94), rgba(246, 227, 218, 0.88));
+      }
+
+      .cta-block h3 {
+        margin: 0 0 10px;
+        font-size: clamp(26px, 4vw, 40px);
+      }
+
+      .cta-block p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      }
+
+      .reveal.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 960px) {
+        .hero-grid,
+        .grid-3,
+        .grid-2,
+        .cta-block {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-note {
+          grid-template-columns: 1fr;
+        }
+
+        .poster {
+          min-height: 420px;
+        }
+
+        .timeline-item {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .section {
+          width: min(100% - 20px, 1120px);
+        }
+
+        .hero {
+          min-height: auto;
+          padding-top: 16px;
+        }
+
+        .hero-grid {
+          padding: 22px;
+        }
+
+        .block {
+          padding: 20px;
+          border-radius: 24px;
+        }
+
+        .block-head {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .path-step {
+          grid-template-columns: 48px 1fr;
+        }
+
+        .step-no {
+          width: 48px;
+          height: 48px;
+          border-radius: 14px;
+          font-size: 20px;
+        }
+
+        .cta-block .hero-actions {
+          width: 100%;
+        }
+
+        .cta-block .button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="petals" aria-hidden="true"></div>
+
+    <div class="page">
+      <section class="hero section">
+        <div class="hero-shell reveal show">
+          <div class="hero-grid">
+            <div>
+              <div class="eyebrow">SPRING ROMANCE PROMO</div>
+              <h1>
+                为你写诗
+                <span>Write Love Into Spring</span>
+              </h1>
+              <p class="hero-lead">
+                这版不再只做“氛围视频感”，而是把浪漫感、活动信息和参与理由放进同一页里。
+                用户第一眼先被春日情绪打动，第二眼就能知道为什么值得参与。
+              </p>
+
+              <div class="hero-meta">
+                <div class="meta-pill">
+                  <strong>活动时间</strong>
+                  <span>3.30 00:00 - 4.03 23:59</span>
+                </div>
+                <div class="meta-pill">
+                  <strong>活动主题</strong>
+                  <span>春日告白 · 浪漫共创</span>
+                </div>
+                <div class="meta-pill">
+                  <strong>适合表达</strong>
+                  <span>海报页 / 宣传页 / 录屏视频</span>
+                </div>
+              </div>
+
+              <div class="hero-actions">
+                <a class="button button-primary" href="#highlights">查看活动亮点</a>
+                <a class="button button-secondary" href="#journey">看用户参与路径</a>
+              </div>
+
+              <div class="hero-note">
+                <div class="mini-card">
+                  <strong>首屏目标</strong>
+                  <p>先让人想停下来，再让人知道这不是一张纯海报，而是一个可参与的活动。</p>
+                </div>
+                <div class="mini-card">
+                  <strong>视觉方向</strong>
+                  <p>莫奈式暖光、花瓣、柔雾、诗句字幕，整体更像浪漫活动包装而非普通 H5。</p>
+                </div>
+                <div class="mini-card">
+                  <strong>继续细化点</strong>
+                  <p>后面可以继续替换真实文案、礼物名、CTA、活动时间和玩法模块。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="visual-panel">
+              <div class="poster">
+                <div class="poster-content">
+                  <div class="poster-tag">春日限定活动包装</div>
+
+                  <div class="poster-copy">
+                    <h2>把心动写成一首会发光的诗</h2>
+                    <p>
+                      从相遇、送礼、共创到全站可见的浪漫留痕，这页强调“值得参与的理由”，而不只是静态审美。
+                    </p>
+                  </div>
+
+                  <div class="poster-cards">
+                    <div class="poster-card">
+                      <div>
+                        <strong>情绪入口</strong>
+                        <span>春天、心动、轻告白、慢慢靠近</span>
+                      </div>
+                      <em>先打动</em>
+                    </div>
+                    <div class="poster-card">
+                      <div>
+                        <strong>活动表达</strong>
+                        <span>亮点清楚、参与门槛清楚、氛围值更高</span>
+                      </div>
+                      <em>再转化</em>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stack-card">
+                <strong>页面改造思路</strong>
+                <p>
+                  把原本更像“12 秒宣传感页面”的内容，升级成“可以直接承接活动说明与传播”的包装页。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <main class="content">
+        <section class="section block reveal" id="highlights">
+          <div class="block-head">
+            <div>
+              <h3>活动亮点</h3>
+              <p>不是把规则平铺上来，而是把用户最先感知到的浪漫点、奖励感和氛围感先讲清楚。</p>
+            </div>
+            <div class="label">KEY HIGHLIGHTS</div>
+          </div>
+
+          <div class="grid-3">
+            <article class="feature-card">
+              <div class="feature-top">
+                <span>01</span>
+                <span>先被氛围吸引</span>
+              </div>
+              <h4>像春天里的一封告白</h4>
+              <p>首屏文案、背景暖光和花瓣动效服务的是“心动情绪”，让用户第一秒先进入浪漫语境。</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-top">
+                <span>02</span>
+                <span>再被机制打动</span>
+              </div>
+              <h4>有参与理由，不只是好看</h4>
+              <p>活动时间、玩法入口、亮点模块被放进首屏之后，页面更适合真实投放和活动承接。</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-top">
+                <span>03</span>
+                <span>可继续承接细化</span>
+              </div>
+              <h4>后续改文案会很快</h4>
+              <p>这版结构已经把亮点、路径、礼物、节奏拆出来，后面我们可以直接填真实活动信息。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section block reveal" id="journey">
+          <div class="block-head">
+            <div>
+              <h3>用户参与路径</h3>
+              <p>这一块把“活动怎么玩”改写成更顺的用户路径表达，后续可以直接替换成你们的真实玩法节点。</p>
+            </div>
+            <div class="label">USER JOURNEY</div>
+          </div>
+
+          <div class="path-list">
+            <div class="path-card path-step">
+              <div class="step-no">1</div>
+              <div>
+                <h4>先进入活动氛围</h4>
+                <p>看到春日主题包装、活动标题和诗句式文案，用户知道这是一个“适合表达心动”的节点，而不是普通榜单页。</p>
+              </div>
+            </div>
+
+            <div class="path-card path-step">
+              <div class="step-no">2</div>
+              <div>
+                <h4>理解值得参与的理由</h4>
+                <p>亮点模块告诉用户为什么来，时间模块告诉用户什么时候来，CTA 负责把浪漫感转成行动感。</p>
+              </div>
+            </div>
+
+            <div class="path-card path-step">
+              <div class="step-no">3</div>
+              <div>
+                <h4>被奖励和排面放大</h4>
+                <p>后续我们可以接入真实礼物、场景触发、榜单高光或飘屏文案，把“参与之后能获得什么感受”讲得更具体。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section block reveal">
+          <div class="block-head">
+            <div>
+              <h3>页面节奏建议</h3>
+              <p>如果这页后面要兼容录屏或剪成短视频，这个节奏也适合直接转成镜头结构。</p>
+            </div>
+            <div class="label">RHYTHM</div>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">0s - 3s</div>
+              <div class="timeline-body">
+                <strong>情绪开场</strong>
+                <p>用诗句式标题、慢花瓣和暖色雾光把情绪先拉起来，不急着讲玩法。</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">3s - 7s</div>
+              <div class="timeline-body">
+                <strong>亮点说明</strong>
+                <p>给出活动时间、主题和 2 到 3 个最值得参与的点，让用户知道这件事不只是“氛围好看”。</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-time">7s - 12s</div>
+              <div class="timeline-body">
+                <strong>行动收束</strong>
+                <p>用 CTA 或“现在就去参与”的按钮收住页面，让内容更接近运营活动真实承接。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section block reveal">
+          <div class="block-head">
+            <div>
+              <h3>礼物 / 场景模块预留</h3>
+              <p>这里我先放了适合后续替换的包装位。你给我真实礼物名、动效或玩法后，我能继续把这里写成更像宣传物料的表达。</p>
+            </div>
+            <div class="label">GIFT MOMENTS</div>
+          </div>
+
+          <div class="grid-2">
+            <article class="gift-card">
+              <h4>礼物高光位</h4>
+              <p>适合放“大礼物动效 / 冠名礼物 / 限定返场礼物”。</p>
+              <ul>
+                <li>第一眼卖点是什么</li>
+                <li>送出后房间发生什么变化</li>
+                <li>这份排面适合用什么镜头放大</li>
+              </ul>
+            </article>
+
+            <article class="gift-card">
+              <h4>场景触发位</h4>
+              <p>适合放“牵手场景 / 飘屏 / 榜单冲刺 / 全站播报”之类的公域高光。</p>
+              <ul>
+                <li>触发条件是否足够有期待感</li>
+                <li>全房可见还是全站可见</li>
+                <li>用户会不会觉得‘值得炫耀’</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="section block reveal">
+          <div class="block-head">
+            <div>
+              <h3>风格关键词</h3>
+              <p>如果我们继续往下细化视觉，可以从这几个方向里选定更明确的包装语气。</p>
+            </div>
+            <div class="label">TONE BOARD</div>
+          </div>
+
+          <div class="grid-3">
+            <article class="tone-card">
+              <h4>梦幻</h4>
+              <p>柔光、花瓣、雾感、慢节奏字幕，适合“春天、写诗、告白、朦胧心动”。</p>
+            </article>
+            <article class="tone-card">
+              <h4>浪漫</h4>
+              <p>更强调双人关系、纪念感和“把一句话说给你听”的靠近感。</p>
+            </article>
+            <article class="tone-card">
+              <h4>活动包装</h4>
+              <p>保留审美，但信息传达更清楚，更适合真正上线和分享给团队一起对照改。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section block cta-block reveal">
+          <div>
+            <h3>这版已经适合继续细化真实活动内容</h3>
+            <p>
+              下一步我们可以继续替换真实活动文案、时间、CTA、礼物名、玩法节点和视频节奏。
+              如果你要，我也可以把这份本地版本再整理成适合部署到 GitHub Pages 的静态页。
+            </p>
+          </div>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#highlights">继续细调这版</a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const petals = document.querySelector(".petals");
+      for (let i = 0; i < 18; i += 1) {
+        const petal = document.createElement("span");
+        petal.className = "petal";
+        petal.style.left = `${Math.random() * 100}%`;
+        petal.style.animationDuration = `${10 + Math.random() * 10}s`;
+        petal.style.animationDelay = `${Math.random() * -16}s`;
+        petal.style.setProperty("--drift", `${-80 + Math.random() * 160}px`);
+        petal.style.opacity = `${0.35 + Math.random() * 0.45}`;
+        petal.style.transform = `scale(${0.7 + Math.random() * 0.7})`;
+        petals.appendChild(petal);
+      }
+
+      const reveals = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("show");
+            }
+          });
+        },
+        { threshold: 0.16 }
+      );
+
+      reveals.forEach((node, index) => {
+        if (index > 0) {
+          observer.observe(node);
+        }
+      });
+    </script>
+  </body>
+</html>
