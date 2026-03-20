@@ -18262,7 +18262,7 @@ const W0 =
       sequenceSplitMs: 3000,
       textPosition: "center",
       texts: [
-        { content: "满春情谊", type: "impact-kicker", delay: 180 },
+        { content: "满春情意", type: "impact-kicker", delay: 180 },
         { content: "想把最好的春天，都送给你", type: "glory-main", delay: 460 },
       ],
     },
@@ -18709,7 +18709,11 @@ function Gx({
   const b =
     r && f?.length
       ? f[Math.min(f.length - 1, Math.floor(p / (d || 3000)))]
-      : u;
+      : u,
+    y =
+      r && f?.length && d
+        ? Math.max(0, 1 - Math.min(1, Math.abs(p - d) / 520))
+        : 0;
   return G.jsxs("div", {
     "data-loc": "client/src/pages/Home.tsx:443",
     className: "absolute inset-0",
@@ -18753,6 +18757,20 @@ function Gx({
           zIndex: 11,
         },
       }),
+      y > 0
+        ? G.jsx("div", {
+            className: "absolute inset-0 pointer-events-none",
+            style: {
+              zIndex: 12,
+              opacity: y,
+              transition: "opacity 0.38s ease-in-out",
+              background:
+                "radial-gradient(circle at center, rgba(255,244,246,0.16) 0%, rgba(255,244,246,0.08) 30%, rgba(255,255,255,0.03) 58%, transparent 78%)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+            },
+          })
+        : null,
     ],
   });
 }
@@ -18808,6 +18826,7 @@ function kx() {
     [f, d] = z.useState(!1),
     [p, b] = z.useState(!1),
     [y, g] = z.useState(!0),
+    [P0, Qx] = z.useState(!1),
     [Z0, J0] = z.useState(0),
     [Q0, K0] = z.useState(!1),
     [R0, T0] = z.useState(0),
@@ -18815,7 +18834,8 @@ function kx() {
     h = z.useRef(null),
     A0 = z.useRef({ x: 0, y: 0 }),
     q0 = z.useRef(!1),
-    Y0 = z.useRef(Date.now());
+    Y0 = z.useRef(Date.now()),
+    ex = z.useRef(null);
   (z.useEffect(() => {
     const R = new Audio(Ux);
     ((R.loop = !0),
@@ -18833,11 +18853,15 @@ function kx() {
     }, [s]));
   const A = z.useCallback(() => {
     const R = h.current;
-    (r(0),
+    (ex.current && clearTimeout(ex.current),
+      r(0),
       (Y0.current = Date.now()),
       J0(0),
-      g(!1),
+      Qx(!0),
       u(!0),
+      (ex.current = setTimeout(() => {
+        (g(!1), Qx(!1), (ex.current = null));
+      }, 650)),
       R &&
         R.play()
           .then(() => {})
@@ -18906,6 +18930,12 @@ function kx() {
         ($.src = J));
     });
   }, []);
+  z.useEffect(
+    () => () => {
+      ex.current && clearTimeout(ex.current);
+    },
+    [],
+  );
   if (
     (z.useEffect(() => {
       if (!(!s || !f || y))
@@ -19214,6 +19244,38 @@ function kx() {
           zIndex: 25,
         },
       }),
+      y || P0
+        ? G.jsxs("div", {
+            className: "fixed inset-0 pointer-events-none",
+            style: {
+              zIndex: 18,
+              background: "rgba(255,255,255,0.04)",
+              backdropFilter: "blur(22px) saturate(0.92)",
+              WebkitBackdropFilter: "blur(22px) saturate(0.92)",
+              boxShadow: "inset 0 0 80px rgba(255,255,255,0.06)",
+              opacity: P0 ? 0 : 1,
+              transition: "opacity 0.65s ease",
+            },
+            children: [
+              G.jsx("div", {
+                style: {
+                  position: "absolute",
+                  inset: "0",
+                  background:
+                    "radial-gradient(circle at 50% 40%, rgba(255,234,241,0.09) 0%, rgba(255,234,241,0) 36%)",
+                },
+              }),
+              G.jsx("div", {
+                style: {
+                  position: "absolute",
+                  inset: "0",
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
+                },
+              }),
+            ],
+          })
+        : null,
       y
         ? G.jsxs("button", {
             onClick: (R) => {
@@ -19221,9 +19283,10 @@ function kx() {
               A();
             },
             className:
-              "fixed left-1/2 top-[63%] -translate-x-1/2 -translate-y-1/2 flex items-center gap-3 rounded-full px-5 py-3 backdrop-blur-md",
+              "fixed left-1/2 -translate-x-1/2 flex items-center gap-3 rounded-full px-5 py-3 backdrop-blur-md",
             style: {
-              zIndex: 55,
+              zIndex: 56,
+              bottom: "22%",
               background: "rgba(17,17,22,0.42)",
               border: "1px solid rgba(255,255,255,0.24)",
               boxShadow: "0 12px 40px rgba(0,0,0,0.28)",
@@ -19251,33 +19314,14 @@ function kx() {
                   }),
                 }),
               }),
-              G.jsxs("span", {
+              G.jsx("span", {
                 style: {
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
+                  fontFamily: "'Noto Sans SC', sans-serif",
+                  fontSize: "0.95rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.12em",
                 },
-                children: [
-                  G.jsx("span", {
-                    style: {
-                      fontFamily: "'Noto Sans SC', sans-serif",
-                      fontSize: "0.95rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.12em",
-                    },
-                    children: "开启播放",
-                  }),
-                  G.jsx("span", {
-                    style: {
-                      fontFamily: "'Noto Sans SC', sans-serif",
-                      fontSize: "0.72rem",
-                      color: "rgba(255,250,243,0.72)",
-                      letterSpacing: "0.1em",
-                      marginTop: "0.1rem",
-                    },
-                    children: "从开场页开始",
-                  }),
-                ],
+                children: "开启播放",
               }),
             ],
           })
