@@ -19655,6 +19655,21 @@ function Vx() {
         component: kx,
       }),
       G.jsx(Ks, {
+        "data-loc": "client/src/App.tsx:13",
+        path: "/pico-prototype/spring-poem",
+        component: kx,
+      }),
+      G.jsx(Ks, {
+        "data-loc": "client/src/App.tsx:13",
+        path: "/pico-prototype/spring-poem/",
+        component: kx,
+      }),
+      G.jsx(Ks, {
+        "data-loc": "client/src/App.tsx:13",
+        path: "/pico-prototype/spring-poem.html",
+        component: kx,
+      }),
+      G.jsx(Ks, {
         "data-loc": "client/src/App.tsx:14",
         path: "/404",
         component: J0,
