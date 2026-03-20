@@ -18206,12 +18206,12 @@ const W0 =
     "https://d2xsxph8kpxj0f.cloudfront.net/310519663443014756/NmjdbD9xBHmcnN5Q7RdEea/bg_couple_silhouette-8o2LJGPbGZiDfjqi9HvPuj.webp",
   Bx =
     "https://d2xsxph8kpxj0f.cloudfront.net/310519663443014756/NmjdbD9xBHmcnN5Q7RdEea/bg_gifts_treasure-XS4TgJ5Si4AePHCBydPsoY.webp",
-  LoaderIcon = "/assets/picopico-loading-icon.jpg",
-  MvBg1 = "/assets/yingtao-shuxia.mp4",
-  MvBg2 = "/assets/mingyue-gaoxuan.mp4",
-  MvLove1 = "/assets/aide-niantou.mp4",
-  MvLove2 = "/assets/tou-toudewen.mp4",
-  MvEnding = "/assets/huaduo-fangxin.mp4",
+  LoaderIcon = "./assets/picopico-loading-icon.jpg",
+  MvBg1 = "./assets/yingtao-shuxia.mp4",
+  MvBg2 = "./assets/mingyue-gaoxuan.mp4",
+  MvLove1 = "./assets/aide-niantou.mp4",
+  MvLove2 = "./assets/tou-toudewen.mp4",
+  MvEnding = "./assets/huaduo-fangxin.mp4",
   Ux =
     "https://d2xsxph8kpxj0f.cloudfront.net/310519663443014756/NmjdbD9xBHmcnN5Q7RdEea/spring_between_notes_5cb89a3e.m4a",
   La = [
@@ -18283,28 +18283,28 @@ const W0 =
         {
           title: "星月相机",
           accent: "夜空花影",
-          image: "/assets/10.png",
+      image: "./assets/10.png",
           background:
             "radial-gradient(circle at 30% 20%, rgba(255,243,200,0.28), transparent 42%), linear-gradient(180deg, rgba(39,49,118,0.96) 0%, rgba(111,126,199,0.82) 100%)",
         },
         {
           title: "樱花春酿",
           accent: "微醺花宴",
-          image: "/assets/14.png",
+      image: "./assets/14.png",
           background:
             "radial-gradient(circle at 50% 18%, rgba(255,255,255,0.4), transparent 35%), linear-gradient(180deg, rgba(255,219,228,0.94) 0%, rgba(173,220,170,0.82) 100%)",
         },
         {
           title: "花漾茶壶",
           accent: "春日茶会",
-          image: "/assets/15.png",
+      image: "./assets/15.png",
           background:
             "radial-gradient(circle at 50% 18%, rgba(255,255,255,0.52), transparent 36%), linear-gradient(180deg, rgba(255,234,244,0.96) 0%, rgba(255,201,226,0.82) 100%)",
         },
         {
           title: "铃兰提琴",
           accent: "花海奏鸣",
-          image: "/assets/4.png",
+      image: "./assets/4.png",
           background:
             "radial-gradient(circle at 35% 20%, rgba(255,255,255,0.4), transparent 38%), linear-gradient(180deg, rgba(166,222,255,0.94) 0%, rgba(255,194,222,0.84) 100%)",
         },
@@ -18319,7 +18319,7 @@ const W0 =
         to: "scale(1.0) translate(1%, 1%)",
       },
       textPosition: "bottom",
-      heroImage: "/assets/langman-zuojia.png",
+    heroImage: "./assets/langman-zuojia.png",
       texts: [
         { content: "浪漫座驾", type: "reward-badge", delay: 160 },
         { content: "桃林深处，拥吻你", type: "reward", delay: 420 },
