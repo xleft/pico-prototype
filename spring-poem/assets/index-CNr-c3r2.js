@@ -18207,11 +18207,11 @@ const W0 =
   Bx =
     "https://d2xsxph8kpxj0f.cloudfront.net/310519663443014756/NmjdbD9xBHmcnN5Q7RdEea/bg_gifts_treasure-XS4TgJ5Si4AePHCBydPsoY.webp",
   LoaderIcon = "./assets/picopico-loading-icon.jpg",
-  MvBg1 = "./assets/yingtao-shuxia.mp4",
-  MvBg2 = "./assets/mingyue-gaoxuan.mp4",
-  MvLove1 = "./assets/aide-niantou.mp4",
-  MvLove2 = "./assets/tou-toudewen.mp4",
-  MvEnding = "./assets/huaduo-fangxin.mp4",
+  MvBg1 = "https://cdn.jsdelivr.net/gh/xleft/pico-prototype@main/spring-poem/assets/yingtao-shuxia.mp4",
+  MvBg2 = "https://cdn.jsdelivr.net/gh/xleft/pico-prototype@main/spring-poem/assets/mingyue-gaoxuan.mp4",
+  MvLove1 = "https://cdn.jsdelivr.net/gh/xleft/pico-prototype@main/spring-poem/assets/aide-niantou.mp4",
+  MvLove2 = "https://cdn.jsdelivr.net/gh/xleft/pico-prototype@main/spring-poem/assets/tou-toudewen.mp4",
+  MvEnding = "https://cdn.jsdelivr.net/gh/xleft/pico-prototype@main/spring-poem/assets/huaduo-fangxin.mp4",
   Ux =
     "https://d2xsxph8kpxj0f.cloudfront.net/310519663443014756/NmjdbD9xBHmcnN5Q7RdEea/spring_between_notes_5cb89a3e.m4a",
   La = [
