@@ -1,0 +1,3669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心动挑战 · 交互原型</title>
+<style>
+/* ══════════════════════════════════
+   全局布局
+══════════════════════════════════ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a1a2e;
+  font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  display: flex;
+  min-height: 100vh;
+  color: #fff;
+}
+
+/* ══════════════════════════════════
+   侧边栏
+══════════════════════════════════ */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: #12122a;
+  border-right: 1px solid rgba(255,255,255,.07);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0 16px;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar-logo {
+  padding: 0 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.sidebar-logo h1 { font-size: 13px; font-weight: 700; color: #ff9de2; }
+.sidebar-logo p { font-size: 10px; color: rgba(255,255,255,.4); margin-top: 3px; }
+
+/* 版本切换 */
+.version-switcher {
+  display: flex;
+  margin: 12px 14px 4px;
+  background: rgba(255,255,255,.06);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.version-btn {
+  flex: 1;
+  padding: 7px 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,.4);
+  cursor: pointer;
+  transition: all .15s;
+}
+.version-btn.active {
+  background: linear-gradient(135deg, rgba(255,107,157,.3), rgba(196,77,255,.3));
+  color: #ff9de2;
+}
+.version-btn:hover:not(.active) {
+  background: rgba(255,255,255,.05);
+}
+
+.nav-group-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255,255,255,.3);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 16px 16px 6px;
+}
+.nav-item {
+  padding: 9px 16px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all .15s;
+  display: none;
+}
+.nav-item.visible { display: block; }
+.nav-item:hover { background: rgba(255,255,255,.05); }
+.nav-item.active {
+  background: rgba(255,107,157,.12);
+  border-left-color: #ff6b9d;
+}
+.nav-item .nav-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,.8);
+}
+.nav-item.active .nav-title { color: #ff9de2; }
+.nav-item .nav-sub {
+  font-size: 10px;
+  color: rgba(255,255,255,.35);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.sidebar-notes {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+.sidebar-notes label {
+  font-size: 9px;
+  color: rgba(255,255,255,.3);
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  letter-spacing: .05em;
+}
+.sidebar-notes textarea {
+  width: 100%;
+  height: 72px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 6px;
+  color: rgba(255,255,255,.7);
+  font-size: 11px;
+  padding: 7px 9px;
+  resize: none;
+  line-height: 1.5;
+  font-family: inherit;
+}
+.sidebar-notes textarea:focus {
+  outline: none;
+  border-color: rgba(255,107,157,.4);
+}
+
+/* ══════════════════════════════════
+   主区域
+══════════════════════════════════ */
+.main-area {
+  margin-left: 220px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 40px;
+  min-height: 100vh;
+}
+.page-header {
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-badge {
+  background: rgba(255,107,157,.15);
+  border: 1px solid rgba(255,107,157,.3);
+  color: #ff9de2;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.page-label {
+  font-size: 12px;
+  color: rgba(255,255,255,.5);
+}
+
+/* ══════════════════════════════════
+   手机框架
+══════════════════════════════════ */
+.phone {
+  width: 375px;
+  height: 812px;
+  background: #000;
+  border-radius: 50px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.1);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 30px;
+  background: #000;
+  border-radius: 0 0 20px 20px;
+  z-index: 999;
+}
+
+/* ══════════════════════════════════
+   状态栏
+══════════════════════════════════ */
+.status-bar {
+  height: 44px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 24px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  position: relative;
+  z-index: 10;
+}
+.status-time { font-size: 15px; font-weight: 700; }
+.status-icons { display: flex; gap: 5px; align-items: center; font-size: 12px; }
+
+/* ══════════════════════════════════
+   Screen 通用
+══════════════════════════════════ */
+.screen {
+  display: none;
+  width: 100%; height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+
+/* ══════════════════════════════════
+   S1 语音房（v1 & v2 共用）
+══════════════════════════════════ */
+.room-bg {
+  width: 100%; height: 100%;
+  background: radial-gradient(ellipse at 50% 30%, #3d1a5c 0%, #1a0a2e 60%, #0d0820 100%);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.room-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 50px 16px 0;
+  position: relative;
+  z-index: 5;
+}
+.room-title { font-size: 13px; font-weight: 700; }
+.room-sub { font-size: 10px; color: rgba(255,255,255,.5); }
+.room-follow-btn {
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+  border: none; color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 5px 14px; border-radius: 20px;
+  cursor: pointer;
+}
+.room-tags {
+  display: flex; gap: 6px;
+  padding: 8px 16px 0;
+  position: relative; z-index: 5;
+}
+.room-tag {
+  background: rgba(255,255,255,.12);
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 10px;
+  display: flex; align-items: center; gap: 4px;
+}
+.room-tag.pink { background: rgba(255,107,157,.2); color: #ff9de2; }
+
+.host-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0 10px;
+  position: relative; z-index: 5;
+}
+.host-avatar-wrap {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,107,157,.6);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255,107,157,.4);
+  transition: transform .2s;
+}
+.host-avatar-wrap:hover { transform: scale(1.05); }
+.host-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.host-crown {
+  font-size: 18px;
+  margin-bottom: -6px;
+  filter: drop-shadow(0 2px 4px rgba(255,200,0,.5));
+}
+.host-name { font-size: 14px; font-weight: 700; margin-top: 6px; }
+.host-hearts { font-size: 12px; color: #ff9de2; margin-top: 2px; }
+
+.seats-area {
+  padding: 0 16px;
+  position: relative; z-index: 5;
+}
+.seats-label { font-size: 10px; color: rgba(255,255,255,.4); margin-bottom: 8px; }
+.seats-row { display: flex; gap: 10px; }
+.seat {
+  display: flex; flex-direction: column; align-items: center;
+  width: 60px;
+}
+.seat-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+}
+.seat-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.seat-avatar.empty { color: rgba(255,255,255,.3); font-size: 18px; }
+.seat-name { font-size: 9px; color: rgba(255,255,255,.6); margin-top: 4px; text-align: center; }
+.seat-badge { font-size: 9px; margin-top: 1px; }
+
+.chat-area {
+  flex: 1;
+  padding: 8px 16px;
+  overflow: hidden;
+  position: relative; z-index: 5;
+}
+.chat-msg { font-size: 11px; color: rgba(255,255,255,.7); margin-bottom: 5px; line-height: 1.4; }
+.chat-msg .name { color: #c44dff; font-weight: 600; }
+.chat-msg .host-name-c { color: #ff9de2; font-weight: 600; }
+.chat-msg.system { color: #ffd700; font-size: 10px; }
+.chat-divider { text-align: center; font-size: 10px; color: rgba(255,255,255,.3); margin: 4px 0; }
+
+.room-bottom {
+  padding: 8px 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative; z-index: 5;
+}
+.chat-input {
+  flex: 1;
+  background: rgba(255,255,255,.1);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,.5);
+}
+.room-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+}
+.room-btn .badge {
+  position: absolute; top: -2px; right: -2px;
+  background: #ff6b9d; color: #fff;
+  font-size: 8px; font-weight: 700;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.recharge-btn {
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+  border: none; color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 8px 14px; border-radius: 20px;
+  cursor: pointer;
+}
+
+.demo-btn {
+  position: absolute;
+  bottom: 72px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,107,157,.2);
+  border: 1px dashed rgba(255,107,157,.5);
+  color: #ff9de2;
+  font-size: 10px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════
+   弹窗通用
+══════════════════════════════════ */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+  padding: 0 16px;
+}
+.overlay.show { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: linear-gradient(180deg, #1e1040 0%, #160d35 100%);
+  border-radius: 24px;
+  width: 100%;
+  padding: 0 0 28px;
+  position: relative;
+  transform: scale(.92);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.overlay.show .modal { transform: scale(1); }
+.modal-handle {
+  width: 36px; height: 4px;
+  background: rgba(255,255,255,.2);
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+.modal-close {
+  position: absolute;
+  top: 14px; right: 16px;
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,.1);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  color: rgba(255,255,255,.6);
+}
+
+/* ══════════════════════════════════
+   v2 弹窗样式
+══════════════════════════════════ */
+.challenge-modal {
+  padding: 0 20px 32px;
+}
+.challenge-header {
+  text-align: center;
+  padding: 20px 0 16px;
+}
+.challenge-icon-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.c-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255,107,157,.5);
+}
+.c-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.c-heart { font-size: 22px; animation: heartbeat 1.2s ease-in-out infinite; }
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+.challenge-title {
+  font-size: 20px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ff9de2, #c44dff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+/* v2 上下奖励展示区 */
+.reward-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+.reward-stack-item {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all .2s;
+}
+.reward-stack-item.highlight {
+  background: linear-gradient(135deg, rgba(255,107,157,.15), rgba(196,77,255,.15));
+  border-color: rgba(255,107,157,.35);
+}
+.reward-stack-item:hover {
+  border-color: rgba(255,107,157,.5);
+}
+.reward-stack-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(255,107,157,.5));
+}
+.reward-stack-text { flex: 1; }
+.reward-stack-label {
+  font-size: 9px;
+  color: rgba(255,255,255,.35);
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.reward-stack-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 2px;
+}
+.reward-stack-desc {
+  font-size: 11px;
+  color: rgba(255,255,255,.45);
+  margin-top: 2px;
+}
+.reward-stack-tap {
+  font-size: 9px;
+  color: rgba(255,107,157,.6);
+  margin-top: 4px;
+}
+
+/* v1 左右双列奖励展示区 */
+.reward-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.reward-col {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  padding: 14px 10px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.reward-col.highlight {
+  background: linear-gradient(135deg, rgba(255,107,157,.15), rgba(196,77,255,.15));
+  border-color: rgba(255,107,157,.35);
+  cursor: pointer;
+}
+.reward-col-icon {
+  font-size: 36px;
+  filter: drop-shadow(0 4px 12px rgba(255,107,157,.5));
+  line-height: 1;
+}
+.reward-col-label {
+  font-size: 9px;
+  color: rgba(255,255,255,.35);
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.reward-col-name {
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.3;
+}
+.reward-col-meta {
+  font-size: 10px;
+  color: rgba(255,255,255,.4);
+  line-height: 1.4;
+}
+.reward-col-tap {
+  font-size: 9px;
+  color: rgba(255,107,157,.6);
+  margin-top: 2px;
+}
+
+.task-deadline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 16px;
+}
+.task-deadline span { color: #ff9de2; font-weight: 700; }
+
+/* 按钮 */
+.btn-primary {
+  flex: 1;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: .03em;
+  box-shadow: 0 6px 20px rgba(255,107,157,.4);
+  transition: transform .15s;
+}
+.btn-primary:active { transform: scale(.98); }
+.btn-secondary {
+  flex: 1;
+  padding: 12px 8px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 50px;
+  color: rgba(255,255,255,.7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-secondary:active { transform: scale(.98); }
+.btn-secondary:hover {
+  background: rgba(255,107,157,.1);
+  border-color: rgba(255,107,157,.3);
+  color: #ff9de2;
+}
+.challenge-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+.challenge-actions.row {
+  flex-direction: row;
+  gap: 10px;
+}
+
+/* 预定成功弹框 */
+.reminder-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+  padding: 24px;
+}
+.reminder-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+.reminder-card {
+  background: #1a1a2e;
+  border: 1px solid rgba(255,107,157,.3);
+  border-radius: 20px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  width: 100%;
+  animation: popIn .25s ease;
+}
+@keyframes popIn {
+  from { transform: scale(.85); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.reminder-icon { font-size: 40px; margin-bottom: 12px; }
+.reminder-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.reminder-text {
+  font-size: 13px;
+  color: rgba(255,255,255,.55);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.reminder-confirm-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(255,107,157,.4);
+}
+.reminder-hint {
+  font-size: 11px;
+  color: rgba(255,255,255,.45);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,.05);
+  border-radius: 8px;
+  text-align: left;
+}
+.reminder-hint a, .reminder-hint span.link {
+  color: #ff9de2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ══════════════════════════════════
+   S3 详情页
+══════════════════════════════════ */
+.detail-page {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #1e0a3c 0%, #0d0820 100%);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.detail-topbar {
+  display: flex;
+  align-items: center;
+  padding: 52px 16px 12px;
+  gap: 8px;
+}
+.back-btn {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,.1);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+.detail-topbar-title {
+  font-size: 16px;
+  font-weight: 700;
+  flex: 1;
+  text-align: center;
+}
+.detail-topbar-placeholder { width: 32px; }
+
+.detail-hero {
+  padding: 8px 20px 20px;
+  text-align: center;
+}
+.detail-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.detail-pair-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.detail-pair-avatar img {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,107,157,.5);
+  object-fit: cover;
+}
+.detail-pair-avatar .pair-name {
+  font-size: 10px;
+  color: rgba(255,255,255,.6);
+}
+.detail-pair-heart { font-size: 28px; }
+
+.detail-deadline-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,107,157,.15);
+  border: 1px solid rgba(255,107,157,.3);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  color: #ff9de2;
+  font-weight: 600;
+}
+
+/* CPday 介绍卡 */
+.cpday-intro-card {
+  margin: 0 16px 12px;
+  background: linear-gradient(135deg, rgba(255,107,157,.12), rgba(196,77,255,.12));
+  border: 1px solid rgba(255,107,157,.25);
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+.cpday-intro-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.cpday-intro-badge {
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.cpday-intro-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+.cpday-intro-desc {
+  font-size: 11px;
+  color: rgba(255,255,255,.65);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.cpday-countdown {
+  background: rgba(0,0,0,.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cpday-countdown-label {
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+}
+.cpday-countdown-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ff9de2;
+  letter-spacing: .03em;
+}
+
+/* v2 奖励图片展示区 */
+.reward-image-area {
+  margin: 0 16px 12px;
+  background: linear-gradient(135deg, rgba(255,107,157,.08), rgba(196,77,255,.08));
+  border: 1px solid rgba(255,107,157,.2);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+}
+.reward-image-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .05em;
+  margin-bottom: 12px;
+}
+.reward-image-placeholder {
+  background: rgba(255,255,255,.04);
+  border: 1px dashed rgba(255,255,255,.15);
+  border-radius: 12px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.reward-image-placeholder .emoji { font-size: 48px; }
+.reward-image-placeholder .text {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,.6);
+}
+.reward-image-placeholder .sub {
+  font-size: 11px;
+  color: rgba(255,255,255,.35);
+}
+
+/* v1 步骤卡 */
+.cpday-steps {
+  margin: 0 16px 12px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+.cpday-steps-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .05em;
+  margin-bottom: 12px;
+}
+.cpday-step {
+  background: rgba(255,255,255,.04);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.cpday-step.highlight {
+  background: linear-gradient(135deg, rgba(255,107,157,.1), rgba(196,77,255,.1));
+  border: 1px solid rgba(255,107,157,.2);
+}
+.cpday-step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.cpday-step-num.done {
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+}
+.cpday-step-body { flex: 1; }
+.cpday-step-name {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.cpday-step-desc {
+  font-size: 11px;
+  color: rgba(255,255,255,.55);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.cpday-gift-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,.06);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+.cpday-gift-row.accent {
+  background: linear-gradient(135deg, rgba(255,107,157,.12), rgba(196,77,255,.12));
+}
+.cpday-gift-icon { font-size: 20px; }
+.cpday-gift-info { flex: 1; }
+.cpday-gift-name { font-size: 12px; font-weight: 700; }
+.cpday-gift-price { font-size: 10px; color: rgba(255,255,255,.5); }
+.cpday-gift-tag {
+  font-size: 9px; font-weight: 700;
+  padding: 2px 7px; border-radius: 10px;
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.6);
+  white-space: nowrap;
+}
+.cpday-gift-tag.accent {
+  background: linear-gradient(135deg, rgba(255,107,157,.3), rgba(196,77,255,.3));
+  color: #ff9de2;
+}
+.cpday-arrow {
+  text-align: center;
+  font-size: 16px;
+  color: rgba(255,255,255,.2);
+  margin: 6px 0;
+}
+
+/* 规则区 */
+.detail-rules {
+  margin: 0 16px 20px;
+  background: rgba(255,255,255,.04);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.detail-rules-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .05em;
+  margin-bottom: 10px;
+}
+.rule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 11px;
+  color: rgba(255,255,255,.55);
+  line-height: 1.5;
+}
+.rule-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(255,107,157,.6);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+/* 任务卡（v1 详情页） */
+.detail-task-card {
+  margin: 0 16px 12px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.detail-task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.detail-task-title {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.task-status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.task-status-badge.pending {
+  background: rgba(255,200,0,.15);
+  color: #ffd700;
+}
+.task-status-badge.done {
+  background: rgba(76,217,100,.15);
+  color: #4cd964;
+}
+.detail-task-body { padding: 12px 16px; }
+.detail-task-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,.6);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.detail-reward-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(255,107,157,.1), rgba(196,77,255,.1));
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.detail-reward-icon { font-size: 28px; }
+.detail-reward-info .reward-label {
+  font-size: 9px;
+  color: rgba(255,255,255,.4);
+  font-weight: 600;
+  letter-spacing: .05em;
+}
+.detail-reward-info .reward-val {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+.detail-reward-info .reward-expire {
+  font-size: 10px;
+  color: rgba(255,255,255,.4);
+}
+
+/* ══════════════════════════════════
+   S4 私信页
+══════════════════════════════════ */
+.msg-page {
+  width: 100%; height: 100%;
+  background: #0f0f1e;
+  display: flex;
+  flex-direction: column;
+}
+.msg-topbar {
+  display: flex;
+  align-items: center;
+  padding: 52px 16px 12px;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.msg-topbar-title {
+  font-size: 16px;
+  font-weight: 700;
+  flex: 1;
+  text-align: center;
+}
+.msg-list { flex: 1; overflow-y: auto; }
+.msg-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  cursor: pointer;
+  transition: background .15s;
+}
+.msg-item:hover { background: rgba(255,255,255,.04); }
+.msg-item.unread { background: rgba(255,107,157,.05); }
+.msg-avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+.msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.msg-unread-dot {
+  position: absolute;
+  top: 0; right: 0;
+  width: 10px; height: 10px;
+  background: #ff6b9d;
+  border-radius: 50%;
+  border: 2px solid #0f0f1e;
+}
+.msg-content { flex: 1; min-width: 0; }
+.msg-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.msg-preview {
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.msg-preview.highlight { color: #ff9de2; }
+.msg-time { font-size: 10px; color: rgba(255,255,255,.3); flex-shrink: 0; }
+
+/* 私信弹窗 */
+.msg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.msg-overlay.show { opacity: 1; pointer-events: all; }
+.msg-chat-topbar {
+  display: flex;
+  align-items: center;
+  padding: 52px 16px 12px;
+  gap: 10px;
+  background: #0f0f1e;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.msg-chat-name { font-size: 15px; font-weight: 700; flex: 1; }
+.msg-chat-body {
+  flex: 1;
+  background: #0f0f1e;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.msg-bubble-wrap { display: flex; gap: 10px; }
+.msg-bubble-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.msg-bubble-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.msg-bubble {
+  max-width: 260px;
+  background: rgba(255,255,255,.08);
+  border-radius: 4px 16px 16px 16px;
+  padding: 12px 14px;
+}
+.msg-bubble-sender {
+  font-size: 10px;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 6px;
+}
+.msg-bubble-text {
+  font-size: 13px;
+  color: rgba(255,255,255,.85);
+  line-height: 1.6;
+}
+
+/* 私信内嵌卡片（v1 用） */
+.msg-inline-card {
+  background: linear-gradient(135deg, rgba(255,107,157,.15), rgba(196,77,255,.15));
+  border: 1px solid rgba(255,107,157,.3);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 10px;
+}
+.msg-inline-card-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ff9de2;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.msg-inline-card-body {
+  font-size: 11px;
+  color: rgba(255,255,255,.6);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.msg-inline-card-btn {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+.msg-chat-input-bar {
+  background: #0f0f1e;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 10px 16px 24px;
+  display: flex;
+  gap: 8px;
+}
+.msg-input {
+  flex: 1;
+  background: rgba(255,255,255,.08);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px;
+  color: rgba(255,255,255,.5);
+  font-size: 12px;
+  font-family: inherit;
+}
+.msg-send-btn {
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ══════════════════════════════════
+   S5 主播中心
+══════════════════════════════════ */
+.anchor-center {
+  width: 100%; height: 100%;
+  background: #0f0f1e;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.anchor-center-topbar {
+  display: flex;
+  align-items: center;
+  padding: 52px 16px 12px;
+  gap: 8px;
+  background: #0f0f1e;
+}
+.anchor-center-topbar-title {
+  font-size: 17px;
+  font-weight: 700;
+  flex: 1;
+  text-align: center;
+}
+.anchor-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px 14px;
+  background: #0f0f1e;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.anchor-profile-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255,107,157,.4);
+}
+.anchor-profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.anchor-profile-info .anchor-name {
+  font-size: 15px; font-weight: 700;
+}
+.anchor-profile-info .anchor-status {
+  font-size: 10px; color: rgba(255,255,255,.4); margin-top: 2px;
+}
+.anchor-profile-stat {
+  margin-left: auto;
+  text-align: right;
+}
+.anchor-profile-stat .stat-val {
+  font-size: 18px; font-weight: 800; color: #c44dff;
+}
+.anchor-profile-stat .stat-label {
+  font-size: 9px; color: rgba(255,255,255,.4);
+}
+
+/* Tab 导航 */
+.anchor-tabs {
+  display: flex;
+  background: #0f0f1e;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.anchor-tabs::-webkit-scrollbar { display: none; }
+.anchor-tab {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,.4);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.anchor-tab.active {
+  color: #ff9de2;
+  border-bottom-color: #ff6b9d;
+}
+.anchor-tab-content { flex: 1; overflow-y: auto; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* 萌新用户 Tab */
+.newbie-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+}
+.newbie-header-tip {
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+}
+.newbie-reward-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(196,77,255,.15);
+  border: 1px solid rgba(196,77,255,.3);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 10px;
+  color: #c44dff;
+  font-weight: 700;
+}
+.newbie-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  cursor: pointer;
+}
+.newbie-item:hover { background: rgba(255,255,255,.03); }
+.newbie-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.newbie-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.newbie-info { flex: 1; min-width: 0; }
+.newbie-name { font-size: 13px; font-weight: 600; }
+.newbie-tags { display: flex; gap: 4px; margin-top: 3px; flex-wrap: wrap; }
+.newbie-tag {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.5);
+}
+.newbie-tag.lv { background: rgba(196,77,255,.2); color: #c44dff; }
+.newbie-reward { font-size: 13px; font-weight: 700; color: #c44dff; flex-shrink: 0; }
+
+/* 心动挑战 Tab */
+.challenge-tab-header {
+  padding: 12px 16px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.challenge-tab-tip {
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+}
+.challenge-count-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255,107,157,.15);
+  color: #ff9de2;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.challenge-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,.4);
+  letter-spacing: .04em;
+}
+.challenge-section-count {
+  background: rgba(255,255,255,.1);
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+}
+.challenge-user-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  cursor: pointer;
+}
+.challenge-user-item:hover { background: rgba(255,255,255,.03); }
+.challenge-user-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.challenge-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.challenge-user-info { flex: 1; min-width: 0; }
+.challenge-user-name { font-size: 13px; font-weight: 600; }
+.challenge-user-sub {
+  font-size: 10px;
+  color: rgba(255,255,255,.4);
+  margin-top: 2px;
+}
+.challenge-user-right { text-align: right; flex-shrink: 0; }
+.challenge-days-left {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ff9de2;
+}
+.challenge-status {
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 8px;
+  margin-top: 3px;
+  display: inline-block;
+}
+.challenge-status.pending {
+  background: rgba(255,107,157,.15);
+  color: #ff9de2;
+}
+.challenge-status.done {
+  background: rgba(76,217,100,.15);
+  color: #4cd964;
+}
+.challenge-reward-tip {
+  margin: 10px 16px;
+  background: rgba(196,77,255,.08);
+  border: 1px solid rgba(196,77,255,.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.6;
+}
+.challenge-reward-tip strong { color: #c44dff; }
+
+/* ══════════════════════════════════
+   v2 在线好友页面
+══════════════════════════════════ */
+.friends-page {
+  width: 100%; height: 100%;
+  background: #0f0f1e;
+  display: flex;
+  flex-direction: column;
+}
+.friends-topbar {
+  display: flex;
+  align-items: center;
+  padding: 52px 16px 12px;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.friends-topbar-title {
+  font-size: 16px;
+  font-weight: 700;
+  flex: 1;
+  text-align: center;
+}
+.friends-float-card {
+  margin: 12px 16px;
+  background: linear-gradient(135deg, rgba(255,107,157,.15), rgba(196,77,255,.15));
+  border: 1px solid rgba(255,107,157,.3);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.friends-float-card:hover {
+  border-color: rgba(255,107,157,.5);
+  background: linear-gradient(135deg, rgba(255,107,157,.2), rgba(196,77,255,.2));
+}
+.friends-float-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.friends-float-text { flex: 1; }
+.friends-float-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ff9de2;
+}
+.friends-float-sub {
+  font-size: 10px;
+  color: rgba(255,255,255,.45);
+  margin-top: 2px;
+}
+.friends-float-arrow {
+  font-size: 14px;
+  color: rgba(255,255,255,.3);
+}
+.friends-section-label {
+  padding: 12px 16px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,.3);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.friends-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.friends-item-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+.friends-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.friends-online-dot {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 10px; height: 10px;
+  background: #4cd964;
+  border-radius: 50%;
+  border: 2px solid #0f0f1e;
+}
+.friends-item-info { flex: 1; min-width: 0; }
+.friends-item-name { font-size: 13px; font-weight: 600; }
+.friends-item-tag {
+  font-size: 10px;
+  color: #ff9de2;
+  margin-top: 2px;
+  font-weight: 600;
+}
+.friends-item-tag.normal {
+  color: rgba(255,255,255,.4);
+  font-weight: 400;
+}
+.friends-item-btn {
+  background: linear-gradient(135deg, #ff6b9d, #c44dff);
+  border: none;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.friends-item-btn.secondary {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.6);
+}
+
+/* ══════════════════════════════════
+   v2 语音房频道页
+══════════════════════════════════ */
+.channel-page {
+  width: 100%; height: 100%;
+  background: #0a0a0f;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.channel-header {
+  padding: 48px 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.channel-header-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+}
+.channel-header-icons {
+  display: flex;
+  gap: 14px;
+  font-size: 16px;
+  color: rgba(255,255,255,.6);
+}
+.channel-banner {
+  margin: 6px 12px;
+  height: 68px;
+  background: linear-gradient(135deg, #ff8c00, #ff3c00);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .5px;
+}
+.channel-tabs {
+  display: flex;
+  padding: 10px 12px 0;
+  gap: 16px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.channel-tab {
+  font-size: 13px;
+  color: rgba(255,255,255,.45);
+  padding-bottom: 8px;
+  cursor: pointer;
+  position: relative;
+}
+.channel-tab.active {
+  color: #fff;
+  font-weight: 700;
+}
+.channel-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 25%; right: 25%;
+  height: 2px;
+  background: #ff6b9d;
+  border-radius: 1px;
+}
+.channel-room-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.channel-room-card {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.channel-room-cover {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+.channel-room-cover img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.channel-room-cover .live-badge {
+  position: absolute;
+  bottom: 4px; left: 4px;
+  background: #ff3b5c;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.channel-room-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.channel-room-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.channel-room-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255,107,157,.15);
+  color: #ff9de2;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  width: fit-content;
+}
+.channel-room-host {
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.channel-room-host img {
+  width: 14px; height: 14px; border-radius: 50%;
+}
+.channel-room-pop {
+  font-size: 11px;
+  color: rgba(255,255,255,.35);
+  align-self: flex-start;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* 浮动气泡（频道页右下角） */
+.channel-float-bubble {
+  position: absolute;
+  bottom: 72px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  z-index: 30;
+  animation: bubblePulse 2s ease-in-out infinite;
+}
+@keyframes bubblePulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.channel-float-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ff6b9d;
+  flex-shrink: 0;
+}
+.channel-float-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.channel-float-text {
+  background: rgba(30,30,40,.92);
+  border: 1px solid rgba(255,107,157,.4);
+  border-radius: 16px 16px 4px 16px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* 半屏弹窗：我的房间和好友 */
+.halfscreen-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 100;
+  display: none;
+  align-items: flex-end;
+}
+.halfscreen-overlay.show {
+  display: flex;
+}
+.halfscreen-panel {
+  width: 100%;
+  max-height: 70%;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.halfscreen-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #222;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid #eee;
+}
+.halfscreen-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+.hs-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+}
+.hs-item-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.hs-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.hs-item-avatar.room-thumb {
+  border-radius: 8px;
+}
+.hs-item-info { flex: 1; min-width: 0; }
+.hs-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
+.hs-item-tag {
+  font-size: 12px;
+  color: #ff3b5c;
+  margin-top: 2px;
+  font-weight: 500;
+}
+.hs-item-btn {
+  background: #4cd964;
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.hs-item-btn.text-btn {
+  background: transparent;
+  color: #999;
+  font-weight: 400;
+  padding: 6px 0;
+}
+
+/* 底部导航 */
+.bottom-nav {
+  display: flex;
+  background: rgba(15,15,30,.95);
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 8px 0 20px;
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+}
+.nav-btn-icon { font-size: 20px; }
+.nav-btn-label { font-size: 9px; color: rgba(255,255,255,.4); }
+.nav-btn.active .nav-btn-label { color: #ff9de2; }
+
+/* ══════════════════════════════════
+   Toast
+══════════════════════════════════ */
+.toast {
+  position: absolute;
+  bottom: 100px; left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(255,107,157,.9);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .3s;
+  z-index: 500;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ══════════════════════════════════
+   全屏模式
+══════════════════════════════════ */
+.fullscreen-btn {
+  position: absolute;
+  top: -12px;
+  right: -48px;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: rgba(255,255,255,.6);
+  font-size: 16px;
+  transition: all .2s;
+  z-index: 10;
+}
+.fullscreen-btn:hover {
+  background: rgba(255,107,157,.2);
+  border-color: rgba(255,107,157,.4);
+  color: #ff9de2;
+}
+body.is-fullscreen .sidebar { display: none; }
+body.is-fullscreen .main-area {
+  margin-left: 0;
+  padding: 0;
+  background: #0a0a1a;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+body.is-fullscreen .page-header { display: none; }
+body.is-fullscreen .fullscreen-btn { display: none; }
+.fs-controls {
+  display: none;
+  position: fixed;
+  top: 20px; right: 24px;
+  z-index: 9999;
+  gap: 10px;
+  align-items: center;
+}
+body.is-fullscreen .fs-controls { display: flex; }
+.fs-btn {
+  width: 40px; height: 40px;
+  background: rgba(20,20,40,.85);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: rgba(255,255,255,.8);
+  font-size: 18px;
+  transition: all .2s;
+  backdrop-filter: blur(8px);
+}
+.fs-btn:hover {
+  background: rgba(255,107,157,.25);
+  border-color: rgba(255,107,157,.5);
+  color: #ff9de2;
+}
+.fs-menu {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 9998;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+body.is-fullscreen .fs-menu.open { display: flex; }
+.fs-menu-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+}
+.fs-menu-panel {
+  position: relative;
+  z-index: 1;
+  width: 260px;
+  background: rgba(18,18,35,.97);
+  border-left: 1px solid rgba(255,255,255,.08);
+  height: 100vh;
+  overflow-y: auto;
+  padding: 24px 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: slideInRight .2s ease;
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.fs-menu-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,.3);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 16px 20px 6px;
+}
+.fs-menu-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background .15s;
+}
+.fs-menu-item:hover { background: rgba(255,107,157,.1); }
+.fs-menu-item.active {
+  background: rgba(255,107,157,.15);
+  border-left: 3px solid #ff6b9d;
+}
+.fs-menu-item .nav-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+}
+.fs-menu-item .nav-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,.35);
+  margin-top: 2px;
+}
+.fs-menu-item.active .nav-title { color: #ff9de2; }
+.fs-menu-item.active .nav-sub { color: rgba(255,107,157,.6); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     侧边栏
+══════════════════════════════════ -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <h1>💕 心动挑战 · 原型</h1>
+    <p>PRD v2.0 · 交互原型图</p>
+  </div>
+
+  <!-- 版本切换器 -->
+  <div class="version-switcher">
+    <div class="version-btn active" id="ver-v2" onclick="switchVersion('v2')">v2 最新版</div>
+    <div class="version-btn" id="ver-v1" onclick="switchVersion('v1')">v1 旧版</div>
+  </div>
+
+  <!-- v2 导航 -->
+  <div class="nav-group-label" data-ver="v2">用户视角</div>
+  <div class="nav-item visible active" id="nav-v2s1" data-ver="v2" onclick="switchScreen('v2s1')">
+    <div class="nav-title">语音房主界面</div>
+    <div class="nav-sub">基础场景 · 触发入口</div>
+  </div>
+  <div class="nav-item visible" id="nav-v2s2" data-ver="v2" onclick="switchScreen('v2s2')">
+    <div class="nav-title">心动挑战开启弹窗</div>
+    <div class="nav-sub">上下奖励 · 条件按钮</div>
+  </div>
+  <div class="nav-item visible" id="nav-v2s3" data-ver="v2" onclick="switchScreen('v2s3')">
+    <div class="nav-title">心动挑战详情页</div>
+    <div class="nav-sub">H5 · 纯图片奖励展示</div>
+  </div>
+  <div class="nav-item visible" id="nav-v2s4" data-ver="v2" onclick="switchScreen('v2s4')">
+    <div class="nav-title">用户私信通知</div>
+    <div class="nav-sub">纯文字私信</div>
+  </div>
+  <div class="nav-item visible" id="nav-v2s5" data-ver="v2" onclick="switchScreen('v2s5')">
+    <div class="nav-title">语音房频道页</div>
+    <div class="nav-sub">浮动气泡 + 我的房间和好友</div>
+  </div>
+
+  <div class="nav-group-label" data-ver="v2">主播视角</div>
+  <div class="nav-item visible" id="nav-v2s6" data-ver="v2" onclick="switchScreen('v2s6')">
+    <div class="nav-title">主播中心</div>
+    <div class="nav-sub">统一列表 · 心动挑战 Tab</div>
+  </div>
+  <div class="nav-item visible" id="nav-v2s7" data-ver="v2" onclick="switchScreen('v2s7')">
+    <div class="nav-title">双端私信提醒</div>
+    <div class="nav-sub">主播 + 用户周提醒</div>
+  </div>
+
+  <!-- v1 导航 -->
+  <div class="nav-group-label" data-ver="v1" style="display:none">用户视角 (v1)</div>
+  <div class="nav-item" id="nav-v1s1" data-ver="v1" onclick="switchScreen('v1s1')">
+    <div class="nav-title">语音房主界面</div>
+    <div class="nav-sub">基础场景 · 触发入口</div>
+  </div>
+  <div class="nav-item" id="nav-v1s2" data-ver="v1" onclick="switchScreen('v1s2')">
+    <div class="nav-title">心动挑战开启弹窗</div>
+    <div class="nav-sub">左右双列 · 并排按钮</div>
+  </div>
+  <div class="nav-item" id="nav-v1s3" data-ver="v1" onclick="switchScreen('v1s3')">
+    <div class="nav-title">心动挑战详情页</div>
+    <div class="nav-sub">步骤卡 · 详细版</div>
+  </div>
+  <div class="nav-item" id="nav-v1s4" data-ver="v1" onclick="switchScreen('v1s4')">
+    <div class="nav-title">用户私信通知</div>
+    <div class="nav-sub">内嵌卡片模块</div>
+  </div>
+
+  <div class="nav-group-label" data-ver="v1" style="display:none">主播视角 (v1)</div>
+  <div class="nav-item" id="nav-v1s5" data-ver="v1" onclick="switchScreen('v1s5')">
+    <div class="nav-title">主播中心</div>
+    <div class="nav-sub">进行中/已完成分区</div>
+  </div>
+  <div class="nav-item" id="nav-v1s6" data-ver="v1" onclick="switchScreen('v1s6')">
+    <div class="nav-title">主播私信提醒</div>
+    <div class="nav-sub">仅主播端</div>
+  </div>
+  <div class="nav-item" id="nav-v1s7" data-ver="v1" onclick="switchScreen('v1s7')">
+    <div class="nav-title">主播与用户私聊</div>
+    <div class="nav-sub">心动挑战进行中</div>
+  </div>
+
+  <div class="sidebar-notes">
+    <label>当前页备注</label>
+    <textarea id="notesArea" placeholder="在此添加对当前页面的备注说明…"></textarea>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     主区域
+══════════════════════════════════ -->
+<div class="main-area">
+  <div class="page-header">
+    <div class="page-badge">原型图</div>
+    <div class="page-label" id="pageLabel">语音房主界面 · 基础场景</div>
+  </div>
+
+  <div style="position:relative;display:inline-block;">
+    <div class="fullscreen-btn" onclick="enterFullscreen()" title="全屏展示">⛶</div>
+  <div class="phone">
+
+    <!-- ══════════════════════════════════
+         v2 页面
+    ══════════════════════════════════ -->
+
+    <!-- ══════ v2 S1 语音房 ══════ -->
+    <div class="screen active" id="v2s1">
+      <div class="room-bg">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="room-topbar">
+          <div>
+            <div class="room-title">首选～新…</div>
+            <div class="room-sub">350168房间</div>
+          </div>
+          <button class="room-follow-btn">关注</button>
+        </div>
+        <div class="room-tags">
+          <div class="room-tag">🏆 排行榜</div>
+          <div class="room-tag pink">💗 心动挑战</div>
+          <div class="room-tag">🎵 娱乐</div>
+        </div>
+        <div class="host-area">
+          <div class="host-crown">👑</div>
+          <div class="host-avatar-wrap" onclick="showOverlay('v2s1-overlay')">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="主播">
+          </div>
+          <div class="host-name">Sx.晚风</div>
+          <div class="host-hearts">💗💗💗</div>
+        </div>
+        <div class="seats-area">
+          <div class="seats-label">嘉宾席</div>
+          <div class="seats-row">
+            <div class="seat">
+              <div class="seat-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=u1&backgroundColor=ffd5dc" alt=""></div>
+              <div class="seat-name">小月光儿</div>
+              <div class="seat-badge">💕</div>
+            </div>
+            <div class="seat">
+              <div class="seat-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=u2&backgroundColor=c0aede" alt=""></div>
+              <div class="seat-name">天天开心</div>
+              <div class="seat-badge">🎵</div>
+            </div>
+            <div class="seat">
+              <div class="seat-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=u3&backgroundColor=d1f4e0" alt=""></div>
+              <div class="seat-name">海海大世界</div>
+              <div class="seat-badge">✨</div>
+            </div>
+            <div class="seat">
+              <div class="seat-avatar empty">＋</div>
+              <div class="seat-name">空位</div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-area">
+          <div class="chat-msg"><span class="name">小月光儿：</span>主播好好听！</div>
+          <div class="chat-msg"><span class="host-name-c">Sx.晚风：</span>谢谢大家的支持 💕</div>
+          <div class="chat-msg"><span class="name">天天开心：</span>今天状态超好</div>
+          <div class="chat-msg system">系统：小月光儿 破除了萌新身份 🎉</div>
+          <div class="chat-divider">✦✧✦✧✦</div>
+        </div>
+        <div class="room-bottom">
+          <div class="chat-input">说点什么…</div>
+          <div class="room-btn">🎁<span class="badge">3</span></div>
+          <div class="room-btn">🎵</div>
+          <div class="room-btn">⋯</div>
+          <button class="recharge-btn">充值</button>
+        </div>
+        <button class="demo-btn" onclick="showOverlay('v2s1-overlay')">模拟：用户破除萌新身份 →</button>
+
+        <!-- v2 弹窗：上下结构 + 条件按钮 -->
+        <div class="overlay" id="v2s1-overlay" onclick="handleOverlayClick(event,'v2s1-overlay')">
+          <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-close" onclick="hideOverlay('v2s1-overlay')">✕</div>
+            <div class="challenge-modal">
+              <div class="challenge-header">
+                <div class="challenge-icon-row">
+                  <div class="c-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user123&backgroundColor=ffd5dc" alt=""></div>
+                  <div class="c-heart">💗</div>
+                  <div class="c-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt=""></div>
+                </div>
+                <div class="challenge-title">心动挑战开启！</div>
+              </div>
+
+              <!-- v2 上下奖励展示区 -->
+              <div class="reward-stack">
+                <div class="reward-stack-item highlight" onclick="event.stopPropagation();previewCarEffect(this)" style="cursor:pointer">
+                  <div class="reward-stack-icon">🚗</div>
+                  <div class="reward-stack-text">
+                    <div class="reward-stack-label">完成奖励</div>
+                    <div class="reward-stack-name">心动专属座驾</div>
+                    <div class="reward-stack-desc">限定道具 · 有效期 7 天</div>
+                    <div class="reward-stack-tap">点击预览入场动效 ›</div>
+                  </div>
+                </div>
+                <div class="reward-stack-item" onclick="event.stopPropagation();hideOverlay('v2s1-overlay');switchScreen('v2s3')" style="cursor:pointer">
+                  <div class="reward-stack-icon">📅</div>
+                  <div class="reward-stack-text">
+                    <div class="reward-stack-label">完成条件</div>
+                    <div class="reward-stack-name">参加 CPday</div>
+                    <div class="reward-stack-desc">每周四与她完成一次约会</div>
+                    <div class="reward-stack-tap">点击查看详情 ›</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="task-deadline">
+                ⏳ 挑战有效期 <span>14 天</span>，过期自动失效
+              </div>
+
+              <!-- v2 条件按钮：非周四 -->
+              <div class="challenge-actions" id="v2s1-actions">
+                <button class="btn-primary" onclick="event.stopPropagation();hideOverlay('v2s1-overlay');showReminderV2Standalone('v2s1')">周四来玩CPDAY</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 浮动卡片入口已移至 v2s5 语音房频道页 -->
+
+        <!-- 独立预定成功确认弹框（覆盖在语音房上方） -->
+        <div class="overlay" id="v2s1-confirm-overlay" onclick="handleOverlayClick(event,'v2s1-confirm-overlay')" style="z-index:200">
+          <div style="background:rgba(30,30,40,.95);border-radius:24px;padding:28px 24px;max-width:300px;width:85%;text-align:center;border:1px solid rgba(255,107,157,.2)">
+            <div style="font-size:36px;margin-bottom:8px">🎉</div>
+            <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:6px">成功提前预约周四 CPday！</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:6px">还剩 <span id="v2s1-confirm-days" style="color:#ff9de2;font-weight:800">4</span> 天即可开启</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:18px">我们会提前发送私信提醒您</div>
+            <button onclick="hideOverlay('v2s1-confirm-overlay')" style="width:100%;padding:12px;border:none;border-radius:24px;background:linear-gradient(135deg,#ff6b9d,#c96bff);color:#fff;font-size:14px;font-weight:700;cursor:pointer">确定</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v2s1 -->
+
+    <!-- ══════ v2 S2 弹窗独立展示 ══════ -->
+    <div class="screen" id="v2s2">
+      <div class="room-bg" style="overflow:hidden">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;filter:blur(2px);opacity:.4;padding:20px">
+          <div style="font-size:48px;margin-bottom:8px">👑</div>
+          <div style="font-size:14px;font-weight:700">Sx.晚风</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:4px">语音房 350168</div>
+        </div>
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:0 16px">
+          <div class="modal" style="transform:none;border-radius:24px">
+            <div class="modal-handle"></div>
+            <div class="challenge-modal">
+              <div class="challenge-header">
+                <div class="challenge-icon-row">
+                  <div class="c-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user123&backgroundColor=ffd5dc" alt=""></div>
+                  <div class="c-heart">💗</div>
+                  <div class="c-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt=""></div>
+                </div>
+                <div class="challenge-title">心动挑战开启！</div>
+              </div>
+
+              <!-- v2 上下奖励展示区 -->
+              <div class="reward-stack">
+                <div class="reward-stack-item highlight" onclick="previewCarEffect(this)" style="cursor:pointer">
+                  <div class="reward-stack-icon">🚗</div>
+                  <div class="reward-stack-text">
+                    <div class="reward-stack-label">完成奖励</div>
+                    <div class="reward-stack-name">心动专属座驾</div>
+                    <div class="reward-stack-desc">限定道具 · 有效期 7 天</div>
+                    <div class="reward-stack-tap">点击预览入场动效 ›</div>
+                  </div>
+                </div>
+                <div class="reward-stack-item" onclick="switchScreen('v2s3')" style="cursor:pointer">
+                  <div class="reward-stack-icon">📅</div>
+                  <div class="reward-stack-text">
+                    <div class="reward-stack-label">完成条件</div>
+                    <div class="reward-stack-name">参加 CPday</div>
+                    <div class="reward-stack-desc">每周四与她完成一次约会</div>
+                    <div class="reward-stack-tap">点击查看详情 ›</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="task-deadline">
+                ⏳ 挑战有效期 <span>14 天</span>，过期自动失效
+              </div>
+
+              <!-- 展示两种按钮状态 -->
+              <div style="margin-bottom:8px">
+                <div style="font-size:9px;color:rgba(255,255,255,.3);text-align:center;margin-bottom:6px">▼ 非周四状态</div>
+                <div class="challenge-actions">
+                  <button class="btn-primary" onclick="showToast('🎉 成功提前预约周四 CPday！我们会提前发送私信提醒您')">周四来玩CPDAY</button>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:9px;color:rgba(255,255,255,.3);text-align:center;margin-bottom:6px">▼ 周四当天状态</div>
+                <div class="challenge-actions">
+                  <button class="btn-primary" style="background:linear-gradient(135deg,#ffd700,#ff6b9d)" onclick="showToast('模拟跳转至本周 CPDAY 活动页面')">立即结成周四CP</button>
+                </div>
+              </div>
+            </div><!-- /challenge-modal -->
+          </div><!-- /modal -->
+        </div><!-- /overlay -->
+      </div><!-- /room-bg -->
+    </div><!-- /v2s2 -->
+
+    <!-- ══════ v2 S3 详情页（简化版） ══════ -->
+    <div class="screen" id="v2s3">
+      <div class="detail-page">
+        <div class="status-bar" style="color:#fff;background:transparent;position:relative;z-index:1">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="detail-topbar">
+          <div class="back-btn" onclick="goBack()">‹</div>
+          <div class="detail-topbar-title">心动挑战</div>
+          <div class="detail-topbar-placeholder"></div>
+        </div>
+        <div style="background:rgba(255,107,157,.08);border-bottom:1px solid rgba(255,107,157,.15);padding:4px 16px;display:flex;align-items:center;gap:6px">
+          <span style="font-size:9px;color:rgba(255,255,255,.3);font-weight:600;letter-spacing:.05em">H5 · WebView</span>
+          <span style="flex:1"></span>
+          <span style="font-size:9px;color:rgba(255,255,255,.2)">由 Pico 提供</span>
+        </div>
+
+        <div class="detail-hero">
+          <div class="detail-pair">
+            <div class="detail-pair-avatar">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user123&backgroundColor=ffd5dc" alt="">
+              <span class="pair-name">我</span>
+            </div>
+            <div class="detail-pair-heart">💗</div>
+            <div class="detail-pair-avatar">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="">
+              <span class="pair-name">Sx.晚风</span>
+            </div>
+          </div>
+          <div class="detail-deadline-bar">⏳ 还剩 11 天</div>
+        </div>
+
+        <!-- CPday 介绍卡 -->
+        <div class="cpday-intro-card">
+          <div class="cpday-intro-header">
+            <div class="cpday-intro-badge">每周四</div>
+            <div class="cpday-intro-title">CPday 专属约会日</div>
+          </div>
+          <div class="cpday-intro-desc">每周四是 Pico 的 CP 约会日，和你的心动对象结成 CP 并完成约会，即可完成挑战！</div>
+          <div class="cpday-countdown">
+            <div class="cpday-countdown-label">距下一个 CPday</div>
+            <div class="cpday-countdown-value" id="v2CdTimer">还有 3 天</div>
+          </div>
+        </div>
+
+        <!-- v2 奖励图片展示区（纯图片占位） -->
+        <div class="reward-image-area">
+          <div class="reward-image-title">奖励与 CPDAY 流程</div>
+          <div class="reward-image-placeholder">
+            <div class="emoji">🚗</div>
+            <div class="text">心动专属座驾（7天）</div>
+            <div class="sub">完成 CPday 约会即可获得</div>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,.04);border-radius:10px;text-align:left">
+            <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:6px;font-weight:600">CPDAY 流程</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.8">
+              1️⃣ 送出「心动嘉宾」礼物（9钻）结成 CP<br>
+              2️⃣ 送出 ≥99 钻的非背包礼物完成约会<br>
+              3️⃣ 自动获得心动专属座驾！
+            </div>
+          </div>
+        </div>
+
+        <!-- 规则列表 -->
+        <div class="detail-rules">
+          <div class="detail-rules-title">活动规则</div>
+          <div class="rule-item"><div class="rule-dot"></div><div>首次向主播身份用户送出付费礼物后自动开启心动挑战，收礼人须为主播身份</div></div>
+          <div class="rule-item"><div class="rule-dot"></div><div>挑战有效期 14 天，过期自动失效，不予补偿</div></div>
+          <div class="rule-item"><div class="rule-dot"></div><div>需在 CPday（每周四）与绑定主播结成 CP 并完成约会（非隐藏约会）</div></div>
+          <div class="rule-item"><div class="rule-dot"></div><div>若绑定主播的主播身份被取消，挑战自动终止</div></div>
+          <div class="rule-item"><div class="rule-dot"></div><div>座驾奖励自动发放，有效期 7 天；主播奖励次日 14:00 发放</div></div>
+        </div>
+      </div>
+    </div><!-- /v2s3 -->
+
+    <!-- ══════ v2 S4 用户私信（纯文字） ══════ -->
+    <div class="screen" id="v2s4">
+      <div class="msg-page">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="msg-topbar">
+          <div class="back-btn">‹</div>
+          <div class="msg-topbar-title">消息</div>
+          <div style="width:32px"></div>
+        </div>
+        <div class="msg-list">
+          <div class="msg-item unread" onclick="showMsgOverlay('v2s4-msg')">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico&backgroundColor=ff9de2" alt="">
+              <div class="msg-unread-dot"></div>
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">Pico 心动提醒</div>
+              <div class="msg-preview highlight">💗 【心动挑战开启】恭喜你与主播…</div>
+            </div>
+            <div class="msg-time">刚刚</div>
+          </div>
+          <div class="msg-item">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=system&backgroundColor=c0aede" alt="">
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">系统通知</div>
+              <div class="msg-preview">本周活动奖励已发放，请查收</div>
+            </div>
+            <div class="msg-time">昨天</div>
+          </div>
+          <div class="msg-item">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="">
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">Sx.晚风</div>
+              <div class="msg-preview">欢迎来我房间玩～</div>
+            </div>
+            <div class="msg-time">昨天</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-btn"><div class="nav-btn-icon">🏠</div><div class="nav-btn-label">首页</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">🔍</div><div class="nav-btn-label">发现</div></div>
+          <div class="nav-btn active"><div class="nav-btn-icon">💬</div><div class="nav-btn-label">消息</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">👤</div><div class="nav-btn-label">我的</div></div>
+        </div>
+
+        <!-- 纯文字私信弹窗 -->
+        <div class="msg-overlay" id="v2s4-msg">
+          <div class="msg-chat-topbar">
+            <div class="back-btn" onclick="hideMsgOverlay('v2s4-msg')">‹</div>
+            <div class="msg-chat-name">Pico 心动提醒</div>
+          </div>
+          <div class="msg-chat-body">
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble-avatar">
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico&backgroundColor=ff9de2" alt="">
+              </div>
+              <div>
+                <div class="msg-bubble-sender">Pico 心动提醒 · 刚刚</div>
+                <div class="msg-bubble">
+                  <div class="msg-bubble-text">
+                    【心动挑战开启】恭喜你与主播Sx.晚风结成心动挑战关系！在接下来的14天内，只要在周四CPday与她结成CP并完成一次约会，即可获得专属心动座驾（7天）！快去她的房间看看吧~
+                    <br><br>
+                    <span style="color:#ff9de2;cursor:pointer;text-decoration:underline" onclick="hideMsgOverlay('v2s4-msg');switchScreen('v2s3')">查看详情>></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="msg-chat-input-bar">
+            <input class="msg-input" placeholder="发送消息…" readonly>
+            <button class="msg-send-btn">发送</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v2s4 -->
+
+    <!-- ══════ v2 S5 语音房频道页 ══════ -->
+    <div class="screen" id="v2s5">
+      <div class="channel-page">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+
+        <!-- 频道页头部 -->
+        <div class="channel-header">
+          <div class="channel-header-title">Pico 语音房</div>
+          <div class="channel-header-icons">
+            <span>📋</span>
+            <span>🔍</span>
+            <span>⬆️</span>
+          </div>
+        </div>
+
+        <!-- Banner -->
+        <div class="channel-banner">
+          🏆 新秀歌手成就 · 封印水晶，得到 1 个歌手勋章！
+        </div>
+
+        <!-- Tab 导航 -->
+        <div class="channel-tabs">
+          <div class="channel-tab">关注</div>
+          <div class="channel-tab active">发现</div>
+          <div class="channel-tab">娱乐</div>
+          <div class="channel-tab">新人</div>
+          <div class="channel-tab">小哥哥</div>
+          <div class="channel-tab">小姐姐</div>
+          <div class="channel-tab">聊天</div>
+        </div>
+
+        <!-- 房间列表 -->
+        <div class="channel-room-list">
+          <div class="channel-room-card">
+            <div class="channel-room-cover">
+              <img src="https://api.dicebear.com/7.x/shapes/svg?seed=room1&backgroundColor=ff6b9d" alt="">
+              <div class="live-badge">🎙 交友厅</div>
+            </div>
+            <div class="channel-room-info">
+              <div class="channel-room-name">小鹿乱撞 ❤ 距离你500m</div>
+              <div class="channel-room-tag">🎙 交友厅</div>
+              <div class="channel-room-host">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=xbc&backgroundColor=ffd5dc" alt="">
+                小白菜.X
+              </div>
+            </div>
+            <div class="channel-room-pop">175人气</div>
+          </div>
+
+          <div class="channel-room-card">
+            <div class="channel-room-cover">
+              <img src="https://api.dicebear.com/7.x/shapes/svg?seed=room2&backgroundColor=c96bff" alt="">
+              <div class="live-badge">🎙 聊天交友</div>
+            </div>
+            <div class="channel-room-info">
+              <div class="channel-room-name">摆烂第一名🥇</div>
+              <div class="channel-room-tag">🎙 聊天交友</div>
+              <div class="channel-room-host">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=ray&backgroundColor=c0aede" alt="">
+                Ray.菜
+              </div>
+            </div>
+            <div class="channel-room-pop">62人气</div>
+          </div>
+
+          <div class="channel-room-card">
+            <div class="channel-room-cover">
+              <img src="https://api.dicebear.com/7.x/shapes/svg?seed=room3&backgroundColor=6bafff" alt="">
+              <div class="live-badge">🎙 女神厅</div>
+            </div>
+            <div class="channel-room-info">
+              <div class="channel-room-name">音渡···全麦优质~~~</div>
+              <div class="channel-room-tag">🎙 女神厅</div>
+              <div class="channel-room-host">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=xx&backgroundColor=d1f4e0" alt="">
+                晓晓.后妈
+              </div>
+            </div>
+            <div class="channel-room-pop"></div>
+          </div>
+
+          <div class="channel-room-card">
+            <div class="channel-room-cover">
+              <img src="https://api.dicebear.com/7.x/shapes/svg?seed=room4&backgroundColor=ff9de2" alt="">
+              <div class="live-badge">🎙 女神厅</div>
+            </div>
+            <div class="channel-room-info">
+              <div class="channel-room-name">遇见女友👋 你的专属...</div>
+              <div class="channel-room-tag">🎙 女神厅</div>
+              <div class="channel-room-host">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=yj&backgroundColor=b6e3f4" alt="">
+                YJ林鹿鹿
+              </div>
+            </div>
+            <div class="channel-room-pop">145人气</div>
+          </div>
+        </div>
+
+        <!-- 右下角浮动气泡：你的心动对象在等你 -->
+        <div class="channel-float-bubble" onclick="document.getElementById('v2s5-halfscreen').classList.add('show')">
+          <div class="channel-float-avatar">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="">
+          </div>
+          <div class="channel-float-text">💗 你的心动对象在等你</div>
+        </div>
+
+        <!-- 底部 Tab Bar -->
+        <div class="bottom-nav">
+          <div class="nav-btn"><div class="nav-btn-icon">🎉</div><div class="nav-btn-label">节目</div></div>
+          <div class="nav-btn active"><div class="nav-btn-icon">🎤</div><div class="nav-btn-label" style="color:#ff3b5c">语音房</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">🌐</div><div class="nav-btn-label">广场</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">💬</div><div class="nav-btn-label">消息</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">👑</div><div class="nav-btn-label">我的</div></div>
+        </div>
+
+        <!-- 半屏弹窗：我的房间和好友 -->
+        <div class="halfscreen-overlay" id="v2s5-halfscreen" onclick="if(event.target===this)this.classList.remove('show')">
+          <div class="halfscreen-panel">
+            <div class="halfscreen-title">我的房间和好友</div>
+            <div class="halfscreen-list">
+              <!-- 用户维度：心动挑战对象（最高优先级） -->
+              <div class="hs-item">
+                <div class="hs-item-avatar">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=xbc2&backgroundColor=ffd5dc" alt="">
+                </div>
+                <div class="hs-item-info">
+                  <div class="hs-item-name">小白菜姐姐</div>
+                  <div class="hs-item-tag">周四CP心动挑战</div>
+                </div>
+                <button class="hs-item-btn" onclick="switchScreen('v2s1');document.getElementById('v2s5-halfscreen').classList.remove('show')">蹭房</button>
+              </div>
+              <!-- 用户维度：挚友 -->
+              <div class="hs-item">
+                <div class="hs-item-avatar">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=xbc3&backgroundColor=ffd5dc" alt="">
+                </div>
+                <div class="hs-item-info">
+                  <div class="hs-item-name">小白菜姐姐</div>
+                  <div class="hs-item-tag">我的挚友</div>
+                </div>
+                <button class="hs-item-btn" onclick="switchScreen('v2s1');document.getElementById('v2s5-halfscreen').classList.remove('show')">蹭房</button>
+              </div>
+              <!-- 用户维度：最近送礼 -->
+              <div class="hs-item">
+                <div class="hs-item-avatar">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=xbc4&backgroundColor=ffd5dc" alt="">
+                </div>
+                <div class="hs-item-info">
+                  <div class="hs-item-name">小白菜姐姐</div>
+                  <div class="hs-item-tag">最近送礼最多</div>
+                </div>
+                <button class="hs-item-btn" onclick="switchScreen('v2s1');document.getElementById('v2s5-halfscreen').classList.remove('show')">蹭房</button>
+              </div>
+              <!-- 房间维度：试音卡 -->
+              <div class="hs-item">
+                <div class="hs-item-avatar room-thumb">
+                  <img src="https://api.dicebear.com/7.x/shapes/svg?seed=room1&backgroundColor=ff6b9d" alt="">
+                </div>
+                <div class="hs-item-info">
+                  <div class="hs-item-name">小鹿乱撞</div>
+                  <div class="hs-item-tag">有2张试音卡未使用</div>
+                </div>
+                <span class="hs-item-btn text-btn">去逛逛</span>
+              </div>
+              <!-- 房间维度：好友在房 -->
+              <div class="hs-item">
+                <div class="hs-item-avatar room-thumb">
+                  <img src="https://api.dicebear.com/7.x/shapes/svg?seed=room4&backgroundColor=ff9de2" alt="">
+                </div>
+                <div class="hs-item-info">
+                  <div class="hs-item-name">遇见女友</div>
+                  <div class="hs-item-tag">有3个好友在房间内</div>
+                </div>
+                <span class="hs-item-btn text-btn">去逛逛</span>
+              </div>
+              <!-- 房间维度：试音特权 -->
+              <div class="hs-item">
+                <div class="hs-item-avatar room-thumb">
+                  <img src="https://api.dicebear.com/7.x/shapes/svg?seed=room2&backgroundColor=c96bff" alt="">
+                </div>
+                <div class="hs-item-info">
+                  <div class="hs-item-name">摆烂第一名</div>
+                  <div class="hs-item-tag">你享有这个房间的试音特权</div>
+                </div>
+                <span class="hs-item-btn text-btn">去逛逛</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /v2s5 -->
+
+    <!-- ══════ v2 S6 主播中心（统一列表） ══════ -->
+    <div class="screen" id="v2s6">
+      <div class="anchor-center">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="anchor-center-topbar">
+          <div class="back-btn">‹</div>
+          <div class="anchor-center-topbar-title">主播中心</div>
+          <div style="width:32px"></div>
+        </div>
+        <div class="anchor-profile">
+          <div class="anchor-profile-avatar">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="">
+          </div>
+          <div class="anchor-profile-info">
+            <div class="anchor-name">Sx.晚风 <span style="font-size:10px;color:rgba(255,255,255,.4)">号主正常</span></div>
+            <div class="anchor-status">已连续开播 32 天</div>
+          </div>
+          <div class="anchor-profile-stat">
+            <div class="stat-val">873,643</div>
+            <div class="stat-label">月亮币可提现</div>
+          </div>
+        </div>
+
+        <div class="anchor-tabs">
+          <div class="anchor-tab" onclick="switchV2Tab('v2-tab-data')">数据</div>
+          <div class="anchor-tab" onclick="switchV2Tab('v2-tab-boss')">老板</div>
+          <div class="anchor-tab" onclick="switchV2Tab('v2-tab-newbie')">萌新用户</div>
+          <div class="anchor-tab active" id="v2-tab-challenge-btn" onclick="switchV2Tab('v2-tab-challenge')">心动挑战</div>
+          <div class="anchor-tab" onclick="switchV2Tab('v2-tab-activity')">活动</div>
+        </div>
+
+        <div class="anchor-tab-content">
+          <div class="tab-panel" id="v2-tab-data">
+            <div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,.3);font-size:13px">数据看板（非本次原型范围）</div>
+          </div>
+          <div class="tab-panel" id="v2-tab-boss">
+            <div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,.3);font-size:13px">老板列表（非本次原型范围）</div>
+          </div>
+          <div class="tab-panel" id="v2-tab-newbie">
+            <div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,.3);font-size:13px">萌新用户（非本次原型范围）</div>
+          </div>
+
+          <!-- v2 心动挑战 Tab：统一列表 -->
+          <div class="tab-panel active" id="v2-tab-challenge">
+            <div class="challenge-tab-header">
+              <div class="challenge-tab-tip" style="font-size:10px;line-height:1.5">转化萌新用户并和他一起完成 CPday 的第一个约会，可获得 200 钻石/人的奖励（次日 14:00 发放） <span onclick="switchScreen('v2s3')" style="color:#ff9de2;text-decoration:underline;cursor:pointer">查看详情</span></div>
+            </div>
+
+            <!-- 统一列表 -->
+            <div class="challenge-user-item">
+              <div class="challenge-user-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=newuser1&backgroundColor=ffd5dc" alt=""></div>
+              <div class="challenge-user-info">
+                <div class="challenge-user-name">小月光儿</div>
+                <div class="challenge-user-sub" style="color:#ff9de2">进行中 · 剩 11 天</div>
+              </div>
+              <div class="challenge-user-right">
+                <div class="challenge-status pending">进行中</div>
+              </div>
+            </div>
+            <div class="challenge-user-item">
+              <div class="challenge-user-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=newuser2&backgroundColor=c0aede" alt=""></div>
+              <div class="challenge-user-info">
+                <div class="challenge-user-name">天天开心</div>
+                <div class="challenge-user-sub" style="color:#ff9de2">进行中 · 剩 7 天</div>
+              </div>
+              <div class="challenge-user-right">
+                <div class="challenge-status pending">进行中</div>
+              </div>
+            </div>
+            <div class="challenge-user-item">
+              <div class="challenge-user-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=newuser3&backgroundColor=b6e3f4" alt=""></div>
+              <div class="challenge-user-info">
+                <div class="challenge-user-name">海海大世界</div>
+                <div class="challenge-user-sub" style="color:#4cd964">已完成 · 3 天前</div>
+              </div>
+              <div class="challenge-user-right">
+                <div class="challenge-status done">已完成</div>
+              </div>
+            </div>
+
+
+          </div>
+
+          <div class="tab-panel" id="v2-tab-activity">
+            <div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,.3);font-size:13px">活动列表（非本次原型范围）</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v2s6 -->
+
+    <!-- ══════ v2 S7 双端私信提醒 ══════ -->
+    <div class="screen" id="v2s7">
+      <div class="msg-page">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="msg-topbar">
+          <div class="back-btn">‹</div>
+          <div class="msg-topbar-title">消息</div>
+          <div style="width:32px"></div>
+        </div>
+        <div class="msg-list">
+          <!-- 主播侧提醒 -->
+          <div class="msg-item unread" onclick="showMsgOverlay('v2s7-anchor-msg')">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico&backgroundColor=ff9de2" alt="">
+              <div class="msg-unread-dot"></div>
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">Pico 心动提醒 <span style="font-size:9px;background:rgba(255,107,157,.2);color:#ff9de2;padding:1px 6px;border-radius:4px;margin-left:4px">主播端</span></div>
+              <div class="msg-preview highlight">💗 周四CP即将开启，你有待完成的…</div>
+            </div>
+            <div class="msg-time">周一</div>
+          </div>
+          <!-- 用户侧提醒 -->
+          <div class="msg-item unread" onclick="showMsgOverlay('v2s7-user-msg')">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico2&backgroundColor=c0aede" alt="">
+              <div class="msg-unread-dot"></div>
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">Pico 心动提醒 <span style="font-size:9px;background:rgba(196,77,255,.2);color:#c44dff;padding:1px 6px;border-radius:4px;margin-left:4px">用户端</span></div>
+              <div class="msg-preview highlight">💗 周四CP即将开启，你有待领取的…</div>
+            </div>
+            <div class="msg-time">周一</div>
+          </div>
+          <div class="msg-item">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=system&backgroundColor=c0aede" alt="">
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">系统通知</div>
+              <div class="msg-preview">本周活动奖励已发放，请查收</div>
+            </div>
+            <div class="msg-time">昨天</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-btn"><div class="nav-btn-icon">🏠</div><div class="nav-btn-label">首页</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">🔍</div><div class="nav-btn-label">发现</div></div>
+          <div class="nav-btn active"><div class="nav-btn-icon">💬</div><div class="nav-btn-label">消息</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">👤</div><div class="nav-btn-label">我的</div></div>
+        </div>
+
+        <!-- 主播端私信详情 -->
+        <div class="msg-overlay" id="v2s7-anchor-msg">
+          <div class="msg-chat-topbar">
+            <div class="back-btn" onclick="hideMsgOverlay('v2s7-anchor-msg')">‹</div>
+            <div class="msg-chat-name">Pico 心动提醒 · 主播端</div>
+          </div>
+          <div class="msg-chat-body">
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble-avatar">
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico&backgroundColor=ff9de2" alt="">
+              </div>
+              <div>
+                <div class="msg-bubble-sender">Pico 心动提醒 · 周一</div>
+                <div class="msg-bubble">
+                  <div class="msg-bubble-text">
+                    【心动挑战提醒】周四CP即将开启，你有待完成的CPday奖励！和萌新用户完成CPday约会，每人可得200钻石奖励。快去看看哪些用户还在有效期内吧~
+                    <br><br>
+                    <span style="color:#ff9de2;cursor:pointer;text-decoration:underline" onclick="hideMsgOverlay('v2s7-anchor-msg');switchScreen('v2s6')">去查看>></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="msg-chat-input-bar">
+            <input class="msg-input" placeholder="发送消息…" readonly>
+            <button class="msg-send-btn">发送</button>
+          </div>
+        </div>
+
+        <!-- 用户端私信详情 -->
+        <div class="msg-overlay" id="v2s7-user-msg">
+          <div class="msg-chat-topbar">
+            <div class="back-btn" onclick="hideMsgOverlay('v2s7-user-msg')">‹</div>
+            <div class="msg-chat-name">Pico 心动提醒 · 用户端</div>
+          </div>
+          <div class="msg-chat-body">
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble-avatar">
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico2&backgroundColor=c0aede" alt="">
+              </div>
+              <div>
+                <div class="msg-bubble-sender">Pico 心动提醒 · 周一</div>
+                <div class="msg-bubble">
+                  <div class="msg-bubble-text">
+                    【心动挑战提醒】周四CP即将开启，你有待领取的CPday奖励！和Sx.晚风完成CPday约会，就能获取专属心动座驾！
+                    <br><br>
+                    <span style="color:#ff9de2;cursor:pointer;text-decoration:underline" onclick="hideMsgOverlay('v2s7-user-msg');switchScreen('v2s3')">查看详情></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="msg-chat-input-bar">
+            <input class="msg-input" placeholder="发送消息…" readonly>
+            <button class="msg-send-btn">发送</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v2s7 -->
+
+    <!-- ══════════════════════════════════
+         v1 页面（保留旧版）
+    ══════════════════════════════════ -->
+
+    <!-- ══════ v1 S1 语音房 ══════ -->
+    <div class="screen" id="v1s1">
+      <div class="room-bg">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">🔵 ⚡5G 📶 🔋</span>
+        </div>
+        <div class="room-topbar">
+          <div>
+            <div class="room-title">首选～新…</div>
+            <div class="room-sub">350168房间</div>
+          </div>
+          <button class="room-follow-btn">关注</button>
+        </div>
+        <div class="room-tags">
+          <div class="room-tag">🏆 排行榜</div>
+          <div class="room-tag pink">💗 心动挑战</div>
+          <div class="room-tag">🎵 娱乐</div>
+        </div>
+        <div class="host-area">
+          <div class="host-crown">👑</div>
+          <div class="host-avatar-wrap" onclick="showOverlay('v1s1-overlay')">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="主播">
+          </div>
+          <div class="host-name">Sx.晚风</div>
+          <div class="host-hearts">💗💗💗</div>
+        </div>
+        <div class="seats-area">
+          <div class="seats-label">嘉宾席</div>
+          <div class="seats-row">
+            <div class="seat">
+              <div class="seat-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=u1&backgroundColor=ffd5dc" alt=""></div>
+              <div class="seat-name">小月光儿</div>
+              <div class="seat-badge">💕</div>
+            </div>
+            <div class="seat">
+              <div class="seat-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=u2&backgroundColor=c0aede" alt=""></div>
+              <div class="seat-name">天天开心</div>
+              <div class="seat-badge">🎵</div>
+            </div>
+            <div class="seat">
+              <div class="seat-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=u3&backgroundColor=d1f4e0" alt=""></div>
+              <div class="seat-name">海海大世界</div>
+              <div class="seat-badge">✨</div>
+            </div>
+            <div class="seat">
+              <div class="seat-avatar empty">＋</div>
+              <div class="seat-name">空位</div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-area">
+          <div class="chat-msg"><span class="name">小月光儿：</span>主播好好听！</div>
+          <div class="chat-msg"><span class="host-name-c">Sx.晚风：</span>谢谢大家的支持 💕</div>
+          <div class="chat-msg"><span class="name">天天开心：</span>今天状态超好</div>
+          <div class="chat-msg system">系统：小月光儿 破除了萌新身份 🎉</div>
+          <div class="chat-divider">✦✧✦✧✦</div>
+        </div>
+        <div class="room-bottom">
+          <div class="chat-input">说点什么…</div>
+          <div class="room-btn">🎁<span class="badge">3</span></div>
+          <div class="room-btn">🎵</div>
+          <div class="room-btn">⋯</div>
+          <button class="recharge-btn">充值</button>
+        </div>
+        <button class="demo-btn" onclick="showOverlay('v1s1-overlay')">模拟：用户破除萌新身份 →</button>
+
+        <!-- v1 弹窗：左右双列 + 并排按钮 -->
+        <div class="overlay" id="v1s1-overlay" onclick="handleOverlayClick(event,'v1s1-overlay')">
+          <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-close" onclick="hideOverlay('v1s1-overlay')">✕</div>
+            <div class="challenge-modal">
+              <div class="challenge-header">
+                <div class="challenge-icon-row">
+                  <div class="c-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user123&backgroundColor=ffd5dc" alt=""></div>
+                  <div class="c-heart">💗</div>
+                  <div class="c-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt=""></div>
+                </div>
+                <div class="challenge-title">心动挑战开启！</div>
+              </div>
+              <div class="reward-cols">
+                <div class="reward-col">
+                  <div class="reward-col-label">完成条件</div>
+                  <div class="reward-col-icon">📅</div>
+                  <div class="reward-col-name">参加 CPday</div>
+                  <div class="reward-col-meta">每周四与她完成一次约会</div>
+                </div>
+                <div class="reward-col highlight">
+                  <div class="reward-col-label">完成奖励</div>
+                  <div class="reward-col-icon">🚗</div>
+                  <div class="reward-col-name">心动专属座驾</div>
+                  <div class="reward-col-meta">限定道具 有效期 7 天</div>
+                </div>
+              </div>
+              <div class="task-deadline">⏳ 挑战有效期 <span>14 天</span>，过期自动失效</div>
+              <div class="challenge-actions row">
+                <button class="btn-secondary" onclick="hideOverlay('v1s1-overlay');switchScreen('v1s3')">查看详细规则</button>
+                <button class="btn-primary" onclick="hideOverlay('v1s1-overlay');showReminderV1('v1s1-reminder')">✅ 抢先确认</button>
+              </div>
+              <div class="reminder-overlay" id="v1s1-reminder">
+                <div class="reminder-card">
+                  <div class="reminder-icon">🎉</div>
+                  <div class="reminder-title">成功提前预约周四 CPday！</div>
+                  <div class="reminder-text">还剩 <span id="v1s1-cpday-days" style="color:#ff9de2;font-weight:800">4</span> 天即可开启</div>
+                  <div class="reminder-hint">✨ 如果赠送了本周主题礼物，还能解锁 CPday 的隐藏约会！<br><span class="link" onclick="confirmReminderV1('v1s1-reminder')">查看本周主题礼物 ›</span></div>
+                  <button class="reminder-confirm-btn" onclick="confirmReminderV1('v1s1-reminder')">确定</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v1s1 -->
+
+    <!-- ══════ v1 S2 弹窗独立展示 ══════ -->
+    <div class="screen" id="v1s2">
+      <div class="room-bg" style="overflow:hidden">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">🔵 ⚡5G 📶 🔋</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;filter:blur(2px);opacity:.4;padding:20px">
+          <div style="font-size:48px;margin-bottom:8px">👑</div>
+          <div style="font-size:14px;font-weight:700">Sx.晚风</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:4px">语音房 350168</div>
+        </div>
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center;padding:0 16px 40px">
+          <div class="modal" style="transform:none;border-radius:24px">
+            <div class="modal-handle"></div>
+            <div class="challenge-modal">
+              <div class="challenge-header">
+                <div class="challenge-icon-row">
+                  <div class="c-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user123&backgroundColor=ffd5dc" alt=""></div>
+                  <div class="c-heart">💗</div>
+                  <div class="c-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt=""></div>
+                </div>
+                <div class="challenge-title">心动挑战开启！</div>
+              </div>
+              <div class="reward-cols">
+                <div class="reward-col">
+                  <div class="reward-col-label">完成条件</div>
+                  <div class="reward-col-icon">📅</div>
+                  <div class="reward-col-name">参加 CPday</div>
+                  <div class="reward-col-meta">每周四与她完成一次约会</div>
+                </div>
+                <div class="reward-col highlight">
+                  <div class="reward-col-label">完成奖励</div>
+                  <div class="reward-col-icon">🚗</div>
+                  <div class="reward-col-name">心动专属座驾</div>
+                  <div class="reward-col-meta">限定道具 有效期 7 天</div>
+                </div>
+              </div>
+              <div class="task-deadline">⏳ 挑战有效期 <span>14 天</span>，过期自动失效</div>
+              <div class="challenge-actions row">
+                <button class="btn-secondary">查看详细规则</button>
+                <button class="btn-primary">✅ 抢先确认</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v1s2 -->
+
+    <!-- ══════ v1 S3 详情页（步骤卡版） ══════ -->
+    <div class="screen" id="v1s3">
+      <div class="detail-page">
+        <div class="status-bar" style="color:#fff;background:transparent;position:relative;z-index:1">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="detail-topbar">
+          <div class="back-btn" onclick="goBack()">‹</div>
+          <div class="detail-topbar-title">心动挑战</div>
+          <div class="detail-topbar-placeholder"></div>
+        </div>
+        <div class="detail-hero">
+          <div class="detail-pair">
+            <div class="detail-pair-avatar">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user123&backgroundColor=ffd5dc" alt="">
+              <span class="pair-name">我</span>
+            </div>
+            <div class="detail-pair-heart">💗</div>
+            <div class="detail-pair-avatar">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="">
+              <span class="pair-name">Sx.晚风</span>
+            </div>
+          </div>
+          <div class="detail-deadline-bar">⏳ 还剩 11 天</div>
+        </div>
+        <div class="detail-task-card">
+          <div class="detail-task-header">
+            <div class="detail-task-title">📋 任务进度</div>
+            <div class="task-status-badge pending">待完成</div>
+          </div>
+          <div class="detail-task-body">
+            <div class="detail-task-desc">在 CPday（每周四）与 Sx.晚风 结成 CP 并完成一次约会</div>
+            <div class="detail-reward-row">
+              <div class="detail-reward-icon">🚗</div>
+              <div class="detail-reward-info">
+                <div class="reward-label">完成奖励</div>
+                <div class="reward-val">心动专属座驾</div>
+                <div class="reward-expire">有效期 7 天</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cpday-intro-card">
+          <div class="cpday-intro-header">
+            <div class="cpday-intro-badge">每周四</div>
+            <div class="cpday-intro-title">CPday 专属约会日</div>
+          </div>
+          <div class="cpday-intro-desc">每周四是 Pico 的 CP 约会日，和你的心动对象结成 CP 并完成约会，即可完成挑战！</div>
+          <div class="cpday-countdown">
+            <div class="cpday-countdown-label">距下一个 CPday</div>
+            <div class="cpday-countdown-value">还有 3 天</div>
+          </div>
+        </div>
+        <div class="cpday-steps">
+          <div class="cpday-steps-title">CPDAY 参与流程</div>
+          <div class="cpday-step">
+            <div class="cpday-step-num">1</div>
+            <div class="cpday-step-body">
+              <div class="cpday-step-name">结成 CP</div>
+              <div class="cpday-step-desc">送出「心动嘉宾」礼物（9钻）即可结成 CP</div>
+            </div>
+          </div>
+          <div class="cpday-arrow">↓</div>
+          <div class="cpday-step highlight">
+            <div class="cpday-step-num done">2</div>
+            <div class="cpday-step-body">
+              <div class="cpday-step-name">完成约会</div>
+              <div class="cpday-step-desc">送出 ≥99 钻的非背包礼物完成约会</div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-rules">
+          <div class="detail-rules-title">活动规则</div>
+          <div class="rule-item"><div class="rule-dot"></div><div>首次向主播送出付费礼物后自动开启</div></div>
+          <div class="rule-item"><div class="rule-dot"></div><div>挑战有效期 14 天，过期自动失效</div></div>
+          <div class="rule-item"><div class="rule-dot"></div><div>需在 CPday 与绑定主播结成 CP 并完成约会</div></div>
+          <div class="rule-item"><div class="rule-dot"></div><div>座驾奖励自动发放，有效期 7 天</div></div>
+
+        </div>
+      </div>
+    </div><!-- /v1s3 -->
+
+    <!-- ══════ v1 S4 用户私信（内嵌卡片版） ══════ -->
+    <div class="screen" id="v1s4">
+      <div class="msg-page">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="msg-topbar">
+          <div class="back-btn">‹</div>
+          <div class="msg-topbar-title">消息</div>
+          <div style="width:32px"></div>
+        </div>
+        <div class="msg-list">
+          <div class="msg-item unread" onclick="showMsgOverlay('v1s4-msg')">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico&backgroundColor=ff9de2" alt="">
+              <div class="msg-unread-dot"></div>
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">Pico 心动提醒</div>
+              <div class="msg-preview highlight">💗 心动挑战已开启！快来查看…</div>
+            </div>
+            <div class="msg-time">刚刚</div>
+          </div>
+          <div class="msg-item">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=system&backgroundColor=c0aede" alt="">
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">系统通知</div>
+              <div class="msg-preview">本周活动奖励已发放，请查收</div>
+            </div>
+            <div class="msg-time">昨天</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-btn"><div class="nav-btn-icon">🏠</div><div class="nav-btn-label">首页</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">🔍</div><div class="nav-btn-label">发现</div></div>
+          <div class="nav-btn active"><div class="nav-btn-icon">💬</div><div class="nav-btn-label">消息</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">👤</div><div class="nav-btn-label">我的</div></div>
+        </div>
+        <!-- v1 内嵌卡片私信弹窗 -->
+        <div class="msg-overlay" id="v1s4-msg">
+          <div class="msg-chat-topbar">
+            <div class="back-btn" onclick="hideMsgOverlay('v1s4-msg')">‹</div>
+            <div class="msg-chat-name">Pico 心动提醒</div>
+          </div>
+          <div class="msg-chat-body">
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble-avatar">
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico&backgroundColor=ff9de2" alt="">
+              </div>
+              <div>
+                <div class="msg-bubble-sender">Pico 心动提醒 · 刚刚</div>
+                <div class="msg-bubble">
+                  <div class="msg-bubble-text">恭喜你与主播 Sx.晚风 结成心动挑战关系！</div>
+                  <div class="msg-inline-card">
+                    <div class="msg-inline-card-title">💗 心动挑战已开启</div>
+                    <div class="msg-inline-card-body">在 14 天内参加周四 CPday 与她完成约会，即可获得专属心动座驾（7天）！</div>
+                    <button class="msg-inline-card-btn" onclick="hideMsgOverlay('v1s4-msg');switchScreen('v1s3')">查看挑战详情</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="msg-chat-input-bar">
+            <input class="msg-input" placeholder="发送消息…" readonly>
+            <button class="msg-send-btn">发送</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v1s4 -->
+
+    <!-- ══════ v1 S5 主播中心（进行中/已完成分区） ══════ -->
+    <div class="screen" id="v1s5">
+      <div class="anchor-center">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="anchor-center-topbar">
+          <div class="back-btn">‹</div>
+          <div class="anchor-center-topbar-title">主播中心</div>
+          <div style="width:32px"></div>
+        </div>
+        <div class="anchor-profile">
+          <div class="anchor-profile-avatar">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="">
+          </div>
+          <div class="anchor-profile-info">
+            <div class="anchor-name">Sx.晚风</div>
+            <div class="anchor-status">已连续开播 32 天</div>
+          </div>
+          <div class="anchor-profile-stat">
+            <div class="stat-val">873,643</div>
+            <div class="stat-label">月亮币可提现</div>
+          </div>
+        </div>
+        <div class="anchor-tabs">
+          <div class="anchor-tab">数据</div>
+          <div class="anchor-tab">老板</div>
+          <div class="anchor-tab">萌新用户</div>
+          <div class="anchor-tab active" id="v1-tab-challenge-btn" onclick="switchV1Tab('v1-tab-challenge')" style="position:relative">心动挑战<span style="position:absolute;top:4px;right:2px;width:16px;height:16px;background:#ff6b9d;border-radius:50%;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center">2</span></div>
+          <div class="anchor-tab">活动</div>
+        </div>
+        <div class="anchor-tab-content">
+          <div class="tab-panel active" id="v1-tab-challenge">
+            <div class="challenge-tab-header">
+              <div class="challenge-tab-tip">转化萌新用户可获得 200 钻石/人</div>
+              <div class="challenge-count-badge">共 3 人</div>
+            </div>
+            <div class="challenge-section-label">🔥 进行中 <span class="challenge-section-count">2</span></div>
+            <div class="challenge-user-item">
+              <div class="challenge-user-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=newuser1&backgroundColor=ffd5dc" alt=""></div>
+              <div class="challenge-user-info">
+                <div class="challenge-user-name">小月光儿</div>
+                <div class="challenge-user-sub">3月8日触发 · 已过 11 天</div>
+              </div>
+              <div class="challenge-user-right">
+                <div class="challenge-days-left">剩 3 天</div>
+                <div class="challenge-status pending">待约会</div>
+              </div>
+            </div>
+            <div class="challenge-user-item">
+              <div class="challenge-user-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=newuser2&backgroundColor=c0aede" alt=""></div>
+              <div class="challenge-user-info">
+                <div class="challenge-user-name">天天开心</div>
+                <div class="challenge-user-sub">3月12日触发 · 已过 7 天</div>
+              </div>
+              <div class="challenge-user-right">
+                <div class="challenge-days-left">剩 7 天</div>
+                <div class="challenge-status pending">待约会</div>
+              </div>
+            </div>
+            <div class="challenge-section-label">✅ 已完成 <span class="challenge-section-count">1</span></div>
+            <div class="challenge-user-item">
+              <div class="challenge-user-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=newuser3&backgroundColor=b6e3f4" alt=""></div>
+              <div class="challenge-user-info">
+                <div class="challenge-user-name">海海大世界</div>
+                <div class="challenge-user-sub">3月6日完成 · +200 💎</div>
+              </div>
+              <div class="challenge-user-right">
+                <div class="challenge-status done">已完成</div>
+              </div>
+            </div>
+            <div class="challenge-reward-tip">
+              💎 每成功转化一名萌新用户完成 CPday 约会，可获得 <strong>200 钻石</strong> 奖励
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v1s5 -->
+
+    <!-- ══════ v1 S6 主播私信提醒（仅主播端） ══════ -->
+    <div class="screen" id="v1s6">
+      <div class="msg-page">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="msg-topbar">
+          <div class="back-btn">‹</div>
+          <div class="msg-topbar-title">消息</div>
+          <div style="width:32px"></div>
+        </div>
+        <div class="msg-list">
+          <div class="msg-item unread" onclick="showMsgOverlay('v1s6-msg')">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico&backgroundColor=ff9de2" alt="">
+              <div class="msg-unread-dot"></div>
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">Pico 心动提醒</div>
+              <div class="msg-preview highlight">💗 你有待完成的CPday奖励…</div>
+            </div>
+            <div class="msg-time">周一</div>
+          </div>
+          <div class="msg-item">
+            <div class="msg-avatar">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=system&backgroundColor=c0aede" alt="">
+            </div>
+            <div class="msg-content">
+              <div class="msg-name">系统通知</div>
+              <div class="msg-preview">本周活动奖励已发放</div>
+            </div>
+            <div class="msg-time">昨天</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-btn"><div class="nav-btn-icon">🏠</div><div class="nav-btn-label">首页</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">🔍</div><div class="nav-btn-label">发现</div></div>
+          <div class="nav-btn active"><div class="nav-btn-icon">💬</div><div class="nav-btn-label">消息</div></div>
+          <div class="nav-btn"><div class="nav-btn-icon">👤</div><div class="nav-btn-label">我的</div></div>
+        </div>
+        <div class="msg-overlay" id="v1s6-msg">
+          <div class="msg-chat-topbar">
+            <div class="back-btn" onclick="hideMsgOverlay('v1s6-msg')">‹</div>
+            <div class="msg-chat-name">Pico 心动提醒</div>
+          </div>
+          <div class="msg-chat-body">
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble-avatar">
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=pico&backgroundColor=ff9de2" alt="">
+              </div>
+              <div>
+                <div class="msg-bubble-sender">Pico 心动提醒 · 周一</div>
+                <div class="msg-bubble">
+                  <div class="msg-bubble-text">
+                    【心动挑战提醒】你有待完成的CPday奖励！和萌新用户完成CPday约会，每人可得200钻石奖励。快去看看哪些用户还在有效期内吧~
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="msg-chat-input-bar">
+            <input class="msg-input" placeholder="发送消息…" readonly>
+            <button class="msg-send-btn">发送</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /v1s6 -->
+
+    <!-- ══════ v1 S7 主播与用户私聊 ══════ -->
+    <div class="screen" id="v1s7">
+      <div class="msg-page">
+        <div class="status-bar" style="color:#fff">
+          <span class="status-time">5:42</span>
+          <span class="status-icons">📶 5G 🔋</span>
+        </div>
+        <div class="msg-chat-topbar" style="padding-top:52px">
+          <div class="back-btn">‹</div>
+          <div class="msg-chat-name">小月光儿</div>
+        </div>
+        <div class="msg-chat-body">
+          <div class="msg-bubble-wrap">
+            <div class="msg-bubble-avatar">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=newuser1&backgroundColor=ffd5dc" alt="">
+            </div>
+            <div>
+              <div class="msg-bubble-sender">小月光儿 · 10:32</div>
+              <div class="msg-bubble">
+                <div class="msg-bubble-text">主播姐姐好～我刚来 Pico 不太懂</div>
+              </div>
+            </div>
+          </div>
+          <div class="msg-bubble-wrap" style="flex-direction:row-reverse">
+            <div class="msg-bubble-avatar">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=host&backgroundColor=b6e3f4" alt="">
+            </div>
+            <div>
+              <div class="msg-bubble-sender" style="text-align:right">Sx.晚风 · 10:33</div>
+              <div class="msg-bubble" style="border-radius:16px 4px 16px 16px;background:linear-gradient(135deg,rgba(255,107,157,.2),rgba(196,77,255,.2))">
+                <div class="msg-bubble-text">欢迎欢迎！周四一起来玩 CPday 吧～</div>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center;padding:8px 0">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(255,107,157,.12),rgba(196,77,255,.12));border:1px solid rgba(255,107,157,.25);border-radius:20px;padding:6px 14px;font-size:11px;color:#ff9de2;font-weight:600">
+              💗 心动挑战进行中 · 剩 11 天
+            </div>
+          </div>
+        </div>
+        <div class="msg-chat-input-bar">
+          <input class="msg-input" placeholder="发送消息…" readonly>
+          <button class="msg-send-btn">发送</button>
+        </div>
+      </div>
+    </div><!-- /v1s7 -->
+
+    <!-- Toast -->
+    <div class="toast" id="globalToast"></div>
+
+  </div><!-- /phone -->
+  </div><!-- /relative wrapper -->
+</div><!-- /main-area -->
+
+<!-- 全屏控制 -->
+<div class="fs-controls">
+  <div class="fs-btn" onclick="openFsMenu()" title="页面列表">☰</div>
+  <div class="fs-btn" onclick="exitFullscreen()" title="退出全屏">✕</div>
+</div>
+<div class="fs-menu" id="fsMenu">
+  <div class="fs-menu-backdrop" onclick="closeFsMenu()"></div>
+  <div class="fs-menu-panel" id="fsMenuPanel">
+    <!-- populated by JS -->
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════
+   状态管理
+══════════════════════════════════ */
+let currentVersion = 'v2';
+let currentScreen = 'v2s1';
+let screenHistory = [];
+
+const SCREENS = {
+  v2s1: { title: '语音房主界面', sub: '基础场景 · 触发入口', ver: 'v2' },
+  v2s2: { title: '心动挑战开启弹窗', sub: '上下奖励 · 条件按钮', ver: 'v2' },
+  v2s3: { title: '心动挑战详情页', sub: 'H5 · 纯图片奖励展示', ver: 'v2' },
+  v2s4: { title: '用户私信通知', sub: '纯文字私信', ver: 'v2' },
+  v2s5: { title: '语音房频道页', sub: '浮动气泡 + 我的房间和好友', ver: 'v2' },
+  v2s6: { title: '主播中心', sub: '统一列表 · 心动挑战 Tab', ver: 'v2' },
+  v2s7: { title: '双端私信提醒', sub: '主播 + 用户周提醒', ver: 'v2' },
+  v1s1: { title: '语音房主界面', sub: '基础场景 · 触发入口', ver: 'v1' },
+  v1s2: { title: '心动挑战开启弹窗', sub: '左右双列 · 并排按钮', ver: 'v1' },
+  v1s3: { title: '心动挑战详情页', sub: '步骤卡 · 详细版', ver: 'v1' },
+  v1s4: { title: '用户私信通知', sub: '内嵌卡片模块', ver: 'v1' },
+  v1s5: { title: '主播中心', sub: '进行中/已完成分区', ver: 'v1' },
+  v1s6: { title: '主播私信提醒', sub: '仅主播端', ver: 'v1' },
+  v1s7: { title: '主播与用户私聊', sub: '心动挑战进行中', ver: 'v1' },
+};
+
+/* ══════════════════════════════════
+   版本切换
+══════════════════════════════════ */
+function switchVersion(ver) {
+  currentVersion = ver;
+  document.getElementById('ver-v1').classList.toggle('active', ver === 'v1');
+  document.getElementById('ver-v2').classList.toggle('active', ver === 'v2');
+
+  // Show/hide nav items and group labels
+  document.querySelectorAll('.nav-item').forEach(el => {
+    if (el.dataset.ver === ver) {
+      el.classList.add('visible');
+      el.style.display = '';
+    } else {
+      el.classList.remove('visible');
+      el.style.display = 'none';
+    }
+  });
+  document.querySelectorAll('.nav-group-label').forEach(el => {
+    el.style.display = el.dataset.ver === ver ? '' : 'none';
+  });
+
+  // Switch to first screen of the version
+  const firstScreen = ver === 'v2' ? 'v2s1' : 'v1s1';
+  switchScreen(firstScreen);
+}
+
+/* ══════════════════════════════════
+   页面切换
+══════════════════════════════════ */
+function switchScreen(id) {
+  if (currentScreen === id) return;
+  screenHistory.push(currentScreen);
+  currentScreen = id;
+  renderScreen();
+}
+
+function goBack() {
+  if (screenHistory.length > 0) {
+    currentScreen = screenHistory.pop();
+    renderScreen();
+  }
+}
+
+function renderScreen() {
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  // Show target
+  const target = document.getElementById(currentScreen);
+  if (target) target.classList.add('active');
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.getElementById('nav-' + currentScreen);
+  if (navItem) navItem.classList.add('active');
+
+  // Update page label
+  const info = SCREENS[currentScreen];
+  if (info) {
+    document.getElementById('pageLabel').textContent = info.title + ' · ' + info.sub;
+  }
+
+  // Update fullscreen menu
+  updateFsMenu();
+}
+
+/* ══════════════════════════════════
+   弹窗
+══════════════════════════════════ */
+function showOverlay(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('show');
+}
+function hideOverlay(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+function handleOverlayClick(e, id) {
+  if (e.target.classList.contains('overlay')) {
+    hideOverlay(id);
+  }
+}
+
+/* ══════════════════════════════════
+   预定成功弹框
+══════════════════════════════════ */
+function showReminderV2(id) {
+  // Calculate days to Thursday
+  const today = new Date().getDay();
+  let daysToThursday = (4 - today + 7) % 7;
+  if (daysToThursday === 0) daysToThursday = 7;
+  const daysEl = document.getElementById(id.replace('reminder', 'cpday-days'));
+  if (daysEl) daysEl.textContent = daysToThursday;
+  const el = document.getElementById(id);
+  if (el) el.classList.add('show');
+}
+function confirmReminderV2(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+/* v2 独立预定确认弹框（从 S1 弹窗关闭后弹出） */
+function showReminderV2Standalone(prefix) {
+  const today = new Date().getDay();
+  let daysToThursday = (4 - today + 7) % 7;
+  if (daysToThursday === 0) daysToThursday = 7;
+  const daysEl = document.getElementById(prefix + '-confirm-days');
+  if (daysEl) daysEl.textContent = daysToThursday;
+  setTimeout(() => {
+    showOverlay(prefix + '-confirm-overlay');
+  }, 200);
+}
+
+/* 座驾动效预览（CSS 动画模拟） */
+function previewCarEffect(el) {
+  const icon = el.querySelector('.reward-stack-icon');
+  if (!icon) return;
+  icon.style.transition = 'transform 0.4s ease, filter 0.4s ease';
+  icon.style.transform = 'scale(1.6) rotate(10deg)';
+  icon.style.filter = 'drop-shadow(0 0 12px rgba(255,107,157,.8))';
+  setTimeout(() => {
+    icon.style.transform = 'scale(1.8) translateX(30px)';
+  }, 400);
+  setTimeout(() => {
+    icon.style.transform = 'scale(1) rotate(0deg)';
+    icon.style.filter = 'none';
+  }, 1200);
+  showToast('🚗 座驾入场动效预览');
+}
+function showReminderV1(id) {
+  const today = new Date().getDay();
+  let daysToThursday = (4 - today + 7) % 7;
+  if (daysToThursday === 0) daysToThursday = 7;
+  const daysEl = document.getElementById(id.replace('reminder', 'cpday-days'));
+  if (daysEl) daysEl.textContent = daysToThursday;
+  const el = document.getElementById(id);
+  if (el) el.classList.add('show');
+}
+function confirmReminderV1(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+  showToast('已预约成功，周四会提前提醒你 💕');
+}
+
+/* ══════════════════════════════════
+   私信弹窗
+══════════════════════════════════ */
+function showMsgOverlay(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('show');
+}
+function hideMsgOverlay(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+/* ══════════════════════════════════
+   v2 主播中心 Tab 切换
+══════════════════════════════════ */
+function switchV2Tab(tabId) {
+  document.querySelectorAll('#v2s6 .tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#v2s6 .anchor-tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById(tabId);
+  if (panel) panel.classList.add('active');
+  // Highlight the clicked tab
+  event.target.classList.add('active');
+}
+
+function switchV1Tab(tabId) {
+  document.querySelectorAll('#v1s5 .tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#v1s5 .anchor-tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById(tabId);
+  if (panel) panel.classList.add('active');
+  event.target.classList.add('active');
+}
+
+/* ══════════════════════════════════
+   Toast
+══════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('globalToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ══════════════════════════════════
+   全屏模式
+══════════════════════════════════ */
+function enterFullscreen() {
+  document.body.classList.add('is-fullscreen');
+}
+function exitFullscreen() {
+  document.body.classList.remove('is-fullscreen');
+  closeFsMenu();
+}
+function openFsMenu() {
+  document.getElementById('fsMenu').classList.add('open');
+  updateFsMenu();
+}
+function closeFsMenu() {
+  document.getElementById('fsMenu').classList.remove('open');
+}
+function updateFsMenu() {
+  const panel = document.getElementById('fsMenuPanel');
+  let html = '';
+  let lastVer = '';
+  Object.entries(SCREENS).forEach(([id, info]) => {
+    if (info.ver !== currentVersion) return;
+    if (info.ver !== lastVer) {
+      const verLabel = info.ver === 'v2' ? 'v2 最新版' : 'v1 旧版';
+      html += '<div class="fs-menu-title">' + verLabel + '</div>';
+      lastVer = info.ver;
+    }
+    const isActive = id === currentScreen ? ' active' : '';
+    html += '<div class="fs-menu-item' + isActive + '" onclick="switchScreen(\'' + id + '\');closeFsMenu()">';
+    html += '<div class="nav-title">' + info.title + '</div>';
+    html += '<div class="nav-sub">' + info.sub + '</div>';
+    html += '</div>';
+  });
+  panel.innerHTML = html;
+}
+
+/* ══════════════════════════════════
+   初始化
+══════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderScreen();
+});
+</script>
+</body>
+</html>
