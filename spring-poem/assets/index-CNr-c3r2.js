@@ -18844,6 +18844,7 @@ function kx() {
     [Z0, J0] = z.useState(0),
     [Q0, K0] = z.useState(!1),
     [R0, T0] = z.useState(0),
+    [S0, F0] = z.useState("正在准备资源..."),
     v = z.useRef(null),
     h = z.useRef(null),
     A0 = z.useRef({ x: 0, y: 0 }),
@@ -18932,17 +18933,127 @@ function kx() {
     return () => clearInterval(R);
   }, [i, s]);
   z.useEffect(() => {
-    const R = Array.from(new Set([LoaderIcon, ...La.map((J) => J.bg)].filter(Boolean)));
-    let W = 0;
-    T0(0);
-    R.forEach((J) => {
-      const $ = new Image();
-      (($.onload = $.onerror =
-        () => {
-          (W++, T0(Math.round((W / R.length) * 100)), W >= R.length && d(!0));
-        }),
-        ($.src = J));
+    const R = Array.from(
+        new Set(
+          [
+            LoaderIcon,
+            ...La.map((J) => J.bg),
+            ...La.map((J) => J.heroImage),
+            ...La.flatMap((J) => (J.gifts ? J.gifts.map(($) => $.image) : [])),
+          ].filter(Boolean),
+        ),
+      ),
+      W = Array.from(
+        new Set(
+          [...La.map((J) => J.video), ...La.flatMap((J) => J.videoSequence || [])].filter(Boolean),
+        ),
+      ),
+      J = Array.from(new Set([Ux].filter(Boolean))),
+      $ = [
+        ...R.map((nt) => ({ type: "image", url: nt })),
+        ...W.map((nt) => ({ type: "video", url: nt })),
+        ...J.map((nt) => ({ type: "audio", url: nt })),
+      ];
+    if ($.length === 0) {
+      (T0(100), F0("资源已准备完成"), d(!0));
+      return;
+    }
+    let nt = 0,
+      ct = !1;
+    const ht = (it) => {
+        ct ||
+          ((nt += 1),
+          T0(Math.min(100, Math.round((nt / $.length) * 100))),
+          F0(
+            it.type === "video"
+              ? `正在加载视频 ${nt}/${$.length}`
+              : it.type === "audio"
+                ? `正在加载音乐 ${nt}/${$.length}`
+                : `正在加载图片 ${nt}/${$.length}`,
+          ),
+          nt >= $.length && (F0("资源已准备完成"), d(!0)));
+      },
+      St = $.map((it) => {
+        if (it.type === "image")
+          return new Promise((rt) => {
+            const V = new Image();
+            ((V.onload = () => {
+              (ht(it), rt());
+            }),
+              (V.onerror = () => {
+                (ht(it), rt());
+              }),
+              (V.src = it.url));
+          });
+        if (it.type === "audio")
+          return new Promise((rt) => {
+            const V = new Audio();
+            let xt = !1;
+            const Be = () => {
+              xt ||
+                ((xt = !0),
+                V.removeEventListener("canplaythrough", te),
+                V.removeEventListener("loadeddata", te),
+                V.removeEventListener("error", Bt),
+                clearTimeout(me),
+                ht(it),
+                rt());
+            };
+            function te() {
+              Be();
+            }
+            function Bt() {
+              Be();
+            }
+            const me = setTimeout(Be, 12e3);
+            ((V.preload = "auto"),
+              V.addEventListener("canplaythrough", te, { once: !0 }),
+              V.addEventListener("loadeddata", te, { once: !0 }),
+              V.addEventListener("error", Bt, { once: !0 }),
+              (V.src = it.url),
+              V.load());
+          });
+        return new Promise((rt) => {
+          const V = document.createElement("video");
+          let xt = !1;
+          const Be = () => {
+            xt ||
+              ((xt = !0),
+              V.removeEventListener("canplaythrough", te),
+              V.removeEventListener("loadeddata", te),
+              V.removeEventListener("loadedmetadata", te),
+              V.removeEventListener("error", Bt),
+              clearTimeout(me),
+              (V.pause(), V.removeAttribute("src"), V.load()),
+              ht(it),
+              rt());
+          };
+          function te() {
+            Be();
+          }
+          function Bt() {
+            Be();
+          }
+          const me = setTimeout(Be, 15e3);
+          ((V.preload = "auto"),
+            (V.muted = !0),
+            (V.playsInline = !0),
+            V.setAttribute("webkit-playsinline", "true"),
+            V.setAttribute("x5-playsinline", "true"),
+            V.addEventListener("canplaythrough", te, { once: !0 }),
+            V.addEventListener("loadeddata", te, { once: !0 }),
+            V.addEventListener("loadedmetadata", te, { once: !0 }),
+            V.addEventListener("error", Bt, { once: !0 }),
+            (V.src = it.url),
+            V.load());
+        });
+      });
+    Promise.allSettled(St).then(() => {
+      ct || (T0(100), F0("资源已准备完成"), d(!0));
     });
+    return () => {
+      ct = !0;
+    };
   }, []);
   z.useEffect(
     () => () => {
@@ -18997,7 +19108,7 @@ function kx() {
             textAlign: "center",
             marginBottom: "1rem",
           },
-          children: "加载中...",
+          children: S0,
         }),
         G.jsx("div", {
           style: {
