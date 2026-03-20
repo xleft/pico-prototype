@@ -18723,31 +18723,45 @@ function Gx({
       zIndex: r ? 10 : 5,
     },
     children: [
+      G.jsx("div", {
+        "data-loc": "client/src/pages/Home.tsx:451",
+        className: "absolute inset-0 bg-cover bg-center",
+        style: {
+          backgroundImage: `url(${i})`,
+          transform: r ? s.to : s.from,
+          transition: "transform 5.5s cubic-bezier(0.25,0.46,0.45,0.94)",
+        },
+      }),
       b
         ? G.jsx("video", {
             "data-loc": "client/src/pages/Home.tsx:451",
             className: "absolute inset-0 w-full h-full object-cover",
             key: b,
             src: b,
+            poster: i,
             autoPlay: !0,
             muted: !0,
             loop: !f,
             playsInline: !0,
             preload: "auto",
+            crossOrigin: "anonymous",
+            "webkit-playsinline": "true",
+            "x5-playsinline": "true",
+            "x5-video-player-type": "h5",
+            "x5-video-player-fullscreen": "false",
+            "x-webkit-airplay": "allow",
+            onLoadedMetadata: (P) => {
+              r && P.currentTarget.play().catch(() => {});
+            },
+            onCanPlay: (P) => {
+              r && P.currentTarget.play().catch(() => {});
+            },
             style: {
               transform: r ? s.to : s.from,
               transition: "transform 5.5s cubic-bezier(0.25,0.46,0.45,0.94)",
             },
           })
-        : G.jsx("div", {
-            "data-loc": "client/src/pages/Home.tsx:451",
-            className: "absolute inset-0 bg-cover bg-center",
-            style: {
-              backgroundImage: `url(${i})`,
-              transform: r ? s.to : s.from,
-              transition: "transform 5.5s cubic-bezier(0.25,0.46,0.45,0.94)",
-            },
-          }),
+        : null,
       G.jsx("div", {
         "data-loc": "client/src/pages/Home.tsx:459",
         className: "absolute inset-0",
